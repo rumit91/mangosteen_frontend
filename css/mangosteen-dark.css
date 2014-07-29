@@ -1,0 +1,40 @@
+body {
+	background: #000;
+	color: #fff;
+	font-size: 2em;
+	font-family: "segoe ui";	
+}
+
+#main-container 
+{
+	margin-top: 40px;
+}
+
+#results-label {
+	font-size: 2.6em;
+	font-weight: lighter;
+	margin-top: 20px;
+}
+
+.email-result
+{
+	border-top: 1px #f6f6f6 solid;
+	padding: 10px;
+}
+
+.time,
+.sender-email
+{
+	color: #7e7e7e;
+}
+
+.time
+{
+	font-size: .7em;
+}
+
+.subject
+{
+	font-size: 1.5em;
+	font-weight: bold;
+}
