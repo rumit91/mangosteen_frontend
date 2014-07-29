@@ -1,22 +1,32 @@
 var json_endpoint = "http://eql.herokuapp.com/fake";
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
+var queryParamKey = "q";
+
 //var json_endpoint = "test.json";
 $(document).ready(function(){
+	// Lookup if query string param was passed
+	var query;
+	if (query = qs(queryParamKey)) {
+		$("#search-box").val(query);
+		search(query);
+	} 
 	
 	$(document).keypress(function(e) {
 		if(e.which == 13) {
-			search();
+			search(getSearchQuery());
 		}
 	});
 
 	$("#searchButton").click(function() {
-		search();
+		search(getSearchQuery());
 	});
 });
 
-function search(search_query) {
-	var search_query = $("#search-box").val();
+function getSearchQuery() {
+	return $("#search-box").val();
+}
 
+function search(search_query) {
 	console.log("Searching for " + search_query);
 	$.getJSON( json_endpoint, function( data ) {
 		//var server_response = $.parseJSON( data );
@@ -40,4 +50,10 @@ function search(search_query) {
 			//$("body").append(formatted_html_email_set);
 		}
 	});
+}
+
+function qs(key) {
+    key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+    var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+    return match && decodeURIComponent(match[1].replace(/\+/g, " "));
 }
