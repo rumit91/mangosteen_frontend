@@ -79,21 +79,24 @@
                             <i class="fa fa-angle-double-down animated"></i>
                         </a>
 						-->
-						<div class="input-group input-group-lg">
-							<span class="input-group-addon">
-								<span class="glyphicon glyphicon-search"></span>
-								&nbsp;Show me emails
+						<div id="search-container" class="input-group input-group-lg">
+							<span class="search-prefix">
+                                <span id="search-icon-container">
+								    <span class="glyphicon glyphicon-search"></span>
+								</span>
+                                
+                                &nbsp;Show me emails
 							</span>
-							<div id="search-box" type="text" class="form-control" contenteditable="true" placeholder="ex last week from Samir with an attachment..."></div>
-							<span class="input-group-btn">
-								<button id="searchButton" class="btn btn-default" type="button">Search</button>
-							</span>
+							<div id="search-box" type="text" class="search-query" contenteditable="true" placeholder="ex last week from Samir with an attachment..."></div>
+							<!--<span class="input-group-btn">
+								<button id="searchButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-search"></span></button>
+							</span>-->
 						</div>
                     </div>
                 </div>
 				<div class="row">
                     <div class="col-md-8 col-md-offset-2">
-						<div id='results-label'></div>
 						<div id="email-container">
 						</div>
 					</div>

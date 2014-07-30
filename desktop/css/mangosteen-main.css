@@ -38,8 +38,28 @@ body {
 	margin-top: 40px;
 }
 
+#search-container {
+	border-bottom: 1px solid white;
+	padding-bottom: 10px;
+	width: 100%;
+}
+
+#search-box {
+	width: 481px;
+}
+
+.search-query {
+	display: inline-block;
+}
+
+.search-query:focus {
+	outline: 0;
+}
+
+.search-prefix,
+.search-query,
 #results-label {
-	font-size: 2em;
+	font-size: 1.5em;
 	font-weight: lighter;
 	margin-top: 20px;
 }
@@ -70,6 +90,7 @@ body {
 
 .time,
 .date,
+.day,
 .sender-email,
 .subject,
 .preview
@@ -81,7 +102,7 @@ body {
 .subject,
 .preview
 {
-	color: #7e7e7e;
+	color: #afafaf;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
@@ -89,6 +110,7 @@ body {
 
 .time.phone,
 .date.phone,
+.day.phone,
 .sender-email.phone,
 .subject.phone,
 .preview.phone
