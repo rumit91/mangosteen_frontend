@@ -24,9 +24,18 @@ $(document).ready(function(){
 });
 
 function checkIfPhone() {
+	if (isPhone()) {
+		//$("#query-ui").hide();
+		$("#main-container").css("margin-top", 0);
+	}
+}
+function isPhone() {
 	var urlVars = getUrlVars();
 	if (urlVars["ph"] == 1) {
-		$("#query-ui").hide();
+		return true;
+	}
+	else {
+		return false;
 	}
 }
 
@@ -56,10 +65,24 @@ function search(search_query) {
 			{
 				var email = server_response.emails[array_id];
 				var formatted_html_email = '<div class="email-result">';
+				if(isPhone()) {
+					formatted_html_email += "<div class='email-result-left'>";
+						formatted_html_email += "<div class='sender phone'><span class='sender-name phone'>" + email.from.name + "</span></div>";
+						formatted_html_email += "<div class='subject phone'>" + shortenText(email.subject, true) + "</div>";
+						formatted_html_email += "<div class='preview phone'>" + shortenText(email.body_preview, true) + "</div>";
+					formatted_html_email += "</div>";
+						formatted_html_email += "<div class='email-result-right'>";
+						formatted_html_email += "<div class='date phone'>" + getDateDisplayString(email.sent_time) + "</div>";
+						formatted_html_email += "<div class='time phone'>" + getTimeDisplayString(email.sent_time) + "</div>";
+						formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
+						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
+					formatted_html_email += "</div>";
+				}	
+				else {
 					formatted_html_email += "<div class='email-result-left'>";
 						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span><span class='sender-email'> &#60" + email.from.email + "&#62</span></div>";
-						formatted_html_email += "<div class='subject'>" + shortenText(email.subject) + "</div>";
-						formatted_html_email += "<div class='preview'>" + shortenText(email.body_preview) + "</div>";
+						formatted_html_email += "<div class='subject'>" + shortenText(email.subject, false) + "</div>";
+						formatted_html_email += "<div class='preview'>" + shortenText(email.body_preview, false) + "</div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
 						formatted_html_email += "<div class='date'>" + getDateDisplayString(email.sent_time) + "</div>";
@@ -67,6 +90,7 @@ function search(search_query) {
 						formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
+				}
 				formatted_html_email += "</div>";
 				formatted_html_email_set += formatted_html_email;
 			}
@@ -83,11 +107,19 @@ function qs(key) {
     return match && decodeURIComponent(match[1].replace(/\+/g, " "));
 }
 
-function shortenText(text) {
-	if(text.length < 61) {
-		return text;
+function shortenText(text, isPhone) {
+	if(isPhone) {
+		if(text.length < 46) {
+			return text;
+		} else {
+			return text.substring(0,45) + "...";
+		}
 	} else {
-		return text.substring(0,60) + "...";
+		if(text.length < 61) {
+			return text;
+		} else {
+			return text.substring(0,60) + "...";
+		}
 	}
 }
 

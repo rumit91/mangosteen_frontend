@@ -30,12 +30,13 @@ body {
 .email-result-left {
 	float: left;
 	width: 80%;
-	padding-bottom: 15px;
+	padding-bottom: 20px;
 }
 .email-result-right {
 	float: right;
 	width: 20%;
 }
+
 .time,
 .date,
 .sender-email,
@@ -44,6 +45,7 @@ body {
 {
 	font-size: .75em;
 }
+
 .time,
 .date,
 .sender-email,
@@ -52,8 +54,24 @@ body {
 {
 	color: #7e7e7e;
 }
+
+.time.phone,
+.date.phone,
+.sender-email.phone,
+.subject.phone,
+.preview.phone
+{
+	font-size: 1em;
+
+}
+.sender-name.phone 
+{
+	font-size: 1.5em;
+}
+
 .link-icon 
 {
 	width:10px;
 	height:10px;
 }
+
