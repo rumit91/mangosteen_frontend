@@ -8,7 +8,7 @@ body {
     width: 100%;
     height: 100%;
     /*font-family: Lora,"Helvetica Neue",Helvetica,Arial,sans-serif;*/
-    font-family: Segoe UI;
+    font-family: Segoe UI, "Helvetica Neue";
 	color: #fff;
     background-color: #000;
 }
@@ -67,7 +67,7 @@ a:focus {
     border-bottom: 1px solid rgba(255,255,255,.3);
     text-transform: uppercase;
     /*font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;*/
-	font-family: Segoe UI;
+    font-family: Segoe UI, "Helvetica Neue";
     background-color: #000;
 }
 
@@ -274,7 +274,8 @@ a:focus {
 
 @media(min-width:767px) {
     .content-section {
-        padding-top: 250px;
+        padding-top: 75px;
+        padding-bottom: 75px;
     }
 
     .download-section {
@@ -290,7 +291,7 @@ a:focus {
 .btn {
     text-transform: uppercase;
     /*font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;*/
-	font-family: Segoe UI;
+    font-family: Segoe UI, "Helvetica Neue";
     font-weight: 400;
     -webkit-transition: all .3s ease-in-out;
     -moz-transition: all .3s ease-in-out;
