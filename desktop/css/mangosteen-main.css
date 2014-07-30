@@ -72,7 +72,8 @@ body {
 .time,
 .date,
 .sender-email,
-.preview
+.preview,
+.body
 {
 	font-size: .75em;
 }
@@ -132,4 +133,9 @@ body {
 	font-size: 60%;
 	background-color: rgba(0, 0, 0, 0.75);
 	color: #7e7e7e;
+}
+
+.email-details-expander
+{
+	margin-top: 12px;
 }

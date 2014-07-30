@@ -1,5 +1,6 @@
-var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
+//var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
 //var json_endpoint = "http://eql.herokuapp.com/parse/from%20timur%20to%20samir%20before%20last%20week"
+var json_endpoint = "http://eql.herokuapp.com/parse/about%20microsoft"
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
 var json_contacts_endpoint = "http://eql.herokuapp.com/fake/contacts/";
 var queryParamKey = "q";
@@ -242,13 +243,15 @@ function search(search_query) {
 				}	
 				else {
 					formatted_html_email += "<div class='email-result-left'>";
-						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span></div>";
+						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span><span class='sender-email hide'> &#60" + email.from.email + "&#62</span></div>";
 						formatted_html_email += "<div class='subject'>" + email.subject + "</div>";
 						formatted_html_email += "<div class='preview'>" + email.body_preview + "</div>";
+						formatted_html_email += "<div class='body hide'><hr />" + email.body + "</div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
 						formatted_html_email += "<div class='date'>" + getDateDisplayString(email.sent_time) + "</div>";
 						formatted_html_email += "<div class='time'>" + getTimeDisplayString(email.sent_time) + "</div>";
+						formatted_html_email += "<span class='email-details-expander glyphicon glyphicon-chevron-up'></span>";
 						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
@@ -335,3 +338,21 @@ function showParsingAndTime(result_meta, parse_terms) {
 		$("#parse-results").append(parse_tags_html);
 	}
 }
+$(document).on('click', '.email-details-expander', function () {
+	if( $(this).hasClass("glyphicon-chevron-up")) {
+		$(this).removeClass("glyphicon-chevron-up");
+		$(this).addClass("glyphicon-chevron-down");
+		var email_html = $(this).parentsUntil(".email-result").parent();
+		email_html.find(".body").removeClass("hide");
+		email_html.find(".sender-email").removeClass("hide");
+		email_html.find(".preview").addClass("hide");
+	}
+	else if ( $(this).hasClass("glyphicon-chevron-down")) {
+		$(this).removeClass("glyphicon-chevron-down");
+		$(this).addClass("glyphicon-chevron-up");
+		var email_html = $(this).parentsUntil(".email-result").parent();
+		email_html.find(".preview").removeClass("hide");
+		email_html.find(".sender-email").addClass("hide");
+		email_html.find(".body").addClass("hide");
+	}
+});
