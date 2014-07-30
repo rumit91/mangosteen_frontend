@@ -25,7 +25,6 @@ $(document).ready(function(){
 	checkIfPhone();
 
 	$search_box = $("#search-box");
-	initAutocomplete();
 
 	// Lookup if query string param was passed
 	var query;
@@ -46,11 +45,12 @@ $(document).ready(function(){
 	// Keypress is called before input value is updated. Keyup is called after
 	// Doesn't work well with modified keystrokes (e.g. ctrl+a)
 	$search_box.keyup(function(e) {
-		if (e.keyCode != 32) {
+		//if (e.keyCode != 32) {
 			var query = getSearchQuery();
-			update_search_box(query);
-		}
+			update_search_box(query, e.keyCode == 32);
+		//}
 	});
+	initAutocomplete();
 
 	$("#searchButton").click(function() {
 		search(getSearchQuery());
@@ -61,7 +61,7 @@ $(document).ready(function(){
 function initAutocomplete() {
 	$search_box
       // don't navigate away from the field on tab when selecting an item
-      .bind( "keydown", function( event ) {
+      .bind( "keyup", function( event ) {
         if ( event.keyCode === $.ui.keyCode.TAB &&
             $( this ).autocomplete( "instance" ).menu.active ) {
           event.preventDefault();
@@ -81,7 +81,8 @@ function initAutocomplete() {
         				response([]);
         			}
         		});
-        		//console.log("autocompleting");
+        	} else {
+        		response([]);
         	}
         },
         focus: function() {
@@ -111,36 +112,43 @@ function reset_autocomplete() {
 }
 
 // Grammar highlighting
-function update_search_box(query) {
-	reset_autocomplete();
-	var query_terms = query.split(/\s+/);
-	var new_query_terms = [];
+function update_search_box(query, lastLetterIsSpace) {
+	var query_html;
 
-	query_terms.forEach(function(query_term, index) {
-		if (grammar_terms && grammar_terms.indexOf(query_term) >= 0) {
-			last_grammar_term = query_term;
-			last_grammmar_index = index;
-			current_nongrammar_term = "";
-		} else {
-			// Save current non-grammar term
-			if (index - 1 == last_grammmar_index) {
-				current_nongrammar_term = query_term
+	// Only run processing if last letter was not a space
+	if (!lastLetterIsSpace) {
+		reset_autocomplete();
+		var query_terms = query.split(/\s+/);
+		var new_query_terms = [];
+
+		query_terms.forEach(function(query_term, index) {
+			if (grammar_terms && grammar_terms.indexOf(query_term) >= 0) {
+				last_grammar_term = query_term;
+				last_grammmar_index = index;
+				current_nongrammar_term = "";
 			} else {
-				current_nongrammar_term += " " + query_term;
+				// Save current non-grammar term
+				if (index - 1 == last_grammmar_index) {
+					current_nongrammar_term = query_term
+				} else {
+					current_nongrammar_term += " " + query_term;
+				}
+
+				query_term = '<b>' + query_term + '</b>';
 			}
 
-			query_term = '<b>' + query_term + '</b>';
-		}
+			new_query_terms.push(query_term);	
+		});
 
-		new_query_terms.push(query_term);	
-	});
+		 query_html = new_query_terms.join(" ");
+	} else {
+		query_html = $search_box.html();
+	}
 
-	var query_html = new_query_terms.join(" ");
-
-	// Maintain space
-	// if (query.trim().length == query.length - 1) {
-	// 	query_html += "&nbsp;";
-	// }
+	// Hacky bug fix: add extra space
+	if (query.trim().length == query.length - 1) {
+		query_html += "&nbsp;";
+	}
 
 	// console.log("grammar term: " + last_grammar_term);
 	// console.log("nonqueryterm: " + current_nongrammar_term);
