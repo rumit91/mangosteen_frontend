@@ -4,6 +4,7 @@ var queryParamKey = "q";
 
 //var json_endpoint = "test.json";
 $(document).ready(function(){
+	checkIfPhone();
 	// Lookup if query string param was passed
 	var query;
 	if (query = qs(queryParamKey)) {
@@ -21,6 +22,24 @@ $(document).ready(function(){
 		search(getSearchQuery());
 	});
 });
+
+function checkIfPhone() {
+	var urlVars = getUrlVars();
+	if (urlVars["ph"] == 1) {
+		$("#query-ui").hide();
+	}
+}
+
+function getUrlVars() {
+    var vars = [], hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        vars.push(hash[0]);
+        vars[hash[0]] = hash[1];
+    }
+    return vars;
+}
 
 function getSearchQuery() {
 	return $("#search-box").val();
