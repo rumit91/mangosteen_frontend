@@ -1,5 +1,6 @@
-var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
+//var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
 //var json_endpoint = "http://eql.herokuapp.com/parse/from%20timur%20to%20samir%20before%20last%20week"
+var json_endpoint = "http://eql.herokuapp.com/parse/";
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
 var json_contacts_endpoint = "http://eql.herokuapp.com/fake/contacts/";
 var queryParamKey = "q";
@@ -40,6 +41,7 @@ $(document).ready(function(){
 		if(e.which == 13) {
 			var query = getSearchQuery();
 			search(query);
+			e.preventDefault();
 		}
 	});
 
@@ -119,7 +121,10 @@ function update_search_box(query, lastLetterIsSpace) {
 	// Only run processing if last letter was not a space
 	if (!lastLetterIsSpace) {
 		reset_autocomplete();
-		var query_terms = query.split(/\s+/);
+		var query_terms = query.split(/\s+/).filter(function (term) {
+			return term.length > 0;
+		});
+
 		var new_query_terms = [];
 
 		query_terms.forEach(function(query_term, index) {
@@ -217,7 +222,7 @@ function getSearchQuery() {
 
 function search(search_query) {
 	console.log("Searching for " + search_query);
-	$.getJSON( json_endpoint, function( data ) {
+	$.getJSON( json_endpoint + search_query, function( data ) {
 		//var server_response = $.parseJSON( data );
 		var server_response = data;
 		if(server_response.result.parse_success) {	
@@ -227,6 +232,8 @@ function search(search_query) {
 			{
 				var email = server_response.emails[array_id];
 				var formatted_html_email = '<div class="email-result">';
+				var date_time = new Date(email.sent_time);
+
 				if(isPhone()) {
 					formatted_html_email += "<div class='email-result-left'>";
 						formatted_html_email += "<div class='sender phone'><span class='sender-name phone'>" + email.from.name + "</span></div>";
@@ -234,8 +241,9 @@ function search(search_query) {
 						formatted_html_email += "<div class='preview phone'>" + shortenText(email.body_preview, true) + "</div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
-						formatted_html_email += "<div class='date phone'>" + getDateDisplayString(email.sent_time) + "</div>";
-						formatted_html_email += "<div class='time phone'>" + getTimeDisplayString(email.sent_time) + "</div>";
+						formatted_html_email += "<div class='date phone'>" + getDateDisplayString(date_time) + "</div>";
+						formatted_html_email += "<div class='day phone'>" + getDayOfWeek(date_time) + "</div>";
+						formatted_html_email += "<div class='time phone'>" + getTimeDisplayString(date_time) + "</div>";
 						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
@@ -247,8 +255,9 @@ function search(search_query) {
 						formatted_html_email += "<div class='preview'>" + email.body_preview + "</div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
-						formatted_html_email += "<div class='date'>" + getDateDisplayString(email.sent_time) + "</div>";
-						formatted_html_email += "<div class='time'>" + getTimeDisplayString(email.sent_time) + "</div>";
+						formatted_html_email += "<div class='date'>" + getDateDisplayString(date_time) + "</div>";
+						formatted_html_email += "<div class='day'>" + getDayOfWeek(date_time) + "</div>";
+						formatted_html_email += "<div class='time'>" + getTimeDisplayString(date_time) + "</div>";
 						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
@@ -256,7 +265,6 @@ function search(search_query) {
 				formatted_html_email += "</div>";
 				formatted_html_email_set += formatted_html_email;
 			}
-			$("#results-label").text("Emails " + search_query);
 			$("#email-container").html(formatted_html_email_set);
 			//$("body").append(formatted_html_email_set);
 		}
@@ -286,29 +294,22 @@ function shortenText(text, isPhone) {
 	}*/
 }
 
-function getDateDisplayString(emailTimestamp) {
+function getDayOfWeek(date) {
+  return ["Sunday", "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][date.getDay()];
+};
+
+function getDateDisplayString(date) {
 	//TODO: more complicated stuff like Mon-Fri based on current date
-	var date = parseDate(emailTimestamp);
-	return 	(date.getMonth()+1) + "/" + date.getDate() + "/" + date	.getFullYear().toString().substring(2);
+	// var date = parseDate(emailTimestamp);
+	// return 	(date.getMonth()+1) + "/" + date.getDate() + "/" + date	.getFullYear().toString().substring(2);
+	return date.toLocaleDateString();
 }
 
-function parseDate(emailTimestamp) {
-	var date = emailTimestamp.split('T')[0];
-	var parts = date.split('-');
-	// new Date(year, month [, day [, hours[, minutes[, seconds[, ms]]]]])
-	return new Date(parts[0], parts[1]-1, parts[2]);
-}
-
-function getTimeDisplayString(emailTimestamp) {
-	//TODO: AM/PM + "1 hr ago" scenarios
-	var time = parseTime(emailTimestamp);
-	return (time.getHours()) + ":" + formatMinutes(time.getMinutes());
-}
-
-function parseTime(emailTimestamp) {
-	var time = emailTimestamp.split('T')[1];
-	var parts = time.split(':');
-	return new Date(2014,0,1, parts[0], parts[1], parts[2], 0);
+function getTimeDisplayString(time) {
+	// //TODO: AM/PM + "1 hr ago" scenarios
+	// var time = parseTime(emailTimestamp);
+	// return (time.getHours()) + ":" + formatMinutes(time.getMinutes());
+	return time.toLocaleTimeString();
 }
 
 function formatMinutes(minutesInput) {
