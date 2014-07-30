@@ -1,28 +1,186 @@
 var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
+var json_contacts_endpoint = "http://eql.herokuapp.com/fake/contacts/";
 var queryParamKey = "q";
+var grammar_terms;
+var $search_box;
+
+// autocomplete suggestion
+var autocomplete_grammar_terms = ["from", "to", "by"];
+var last_grammar_term = "";
+var last_grammmar_index = -1;
+var current_nongrammar_term = "";
 
 //var json_endpoint = "test.json";
 $(document).ready(function(){
+	$.get(json_terms_endpoint, function(data) {
+		if (data.terms) {
+			grammar_terms = data.terms;
+			console.log("Terms: " + grammar_terms );
+		} else {
+			console.log("No terms found: " + data);
+		}
+	});
+
 	checkIfPhone();
+
+	$search_box = $("#search-box");
+
 	// Lookup if query string param was passed
 	var query;
 	if (query = qs(queryParamKey)) {
-		$("#search-box").val(query);
+		$search_box.val(query);
 		search(query);
-	} 
+	} else {
+		setEndOfContenteditable($search_box[0]);
+	}
 	
 	$(document).keypress(function(e) {
 		if(e.which == 13) {
-			search(getSearchQuery());
+			var query = getSearchQuery();
+			search(query);
 		}
 	});
+
+	// Keypress is called before input value is updated. Keyup is called after
+	// Doesn't work well with modified keystrokes (e.g. ctrl+a)
+	$search_box.keyup(function(e) {
+		//if (e.keyCode != 32) {
+			var query = getSearchQuery();
+			update_search_box(query, e.keyCode == 32);
+		//}
+	});
+	initAutocomplete();
 
 	$("#searchButton").click(function() {
 		search(getSearchQuery());
 	});
 });
 
+/* GRAMMAR HIGHLIGHTING / AUTOCOMPLETE */
+function initAutocomplete() {
+	$search_box
+      // don't navigate away from the field on tab when selecting an item
+      .bind( "keyup", function( event ) {
+        if ( event.keyCode === $.ui.keyCode.TAB &&
+            $( this ).autocomplete( "instance" ).menu.active ) {
+          event.preventDefault();
+        }
+      })
+      .autocomplete({
+        minLength: 0,
+        source: function( request, response ) {
+            //console.log("request term: "  + request.term);
+        	if (last_grammar_term && current_nongrammar_term && autocomplete_grammar_terms.indexOf(last_grammar_term.toLowerCase()) >= 0) {
+        		
+        		$.get(json_contacts_endpoint + current_nongrammar_term, function(data) {
+        			if (data.contacts) {
+        				//console.log("autocomplete: " + data.contacts);
+        				response(data.contacts);
+        			} else {
+        				response([]);
+        			}
+        		});
+        	} else {
+        		response([]);
+        	}
+        },
+        focus: function() {
+          // prevent value inserted on focus
+          return false;
+        },
+        select: function( event, ui ) {
+            console.log(this.textContent);
+            	var selected = ui.item.value;
+            	var query = $search_box.html();
+            	var current_nongrammar_index = query.lastIndexOf(current_nongrammar_term);
+            	if (current_nongrammar_index >= 0) {
+            		query = query.substring(0, current_nongrammar_index) + selected + query.substring(current_nongrammar_index + current_nongrammar_term.length);
+            		$search_box.html(query);
+            		reset_autocomplete();
+            	}
+
+	          	return false;
+        }
+      });
+}
+
+function reset_autocomplete() {
+	last_grammar_term = "";
+	last_grammmar_index = -1;
+	current_nongrammar_term = "";
+}
+
+// Grammar highlighting
+function update_search_box(query, lastLetterIsSpace) {
+	var query_html;
+
+	// Only run processing if last letter was not a space
+	if (!lastLetterIsSpace) {
+		reset_autocomplete();
+		var query_terms = query.split(/\s+/);
+		var new_query_terms = [];
+
+		query_terms.forEach(function(query_term, index) {
+			if (grammar_terms && grammar_terms.indexOf(query_term) >= 0) {
+				last_grammar_term = query_term;
+				last_grammmar_index = index;
+				current_nongrammar_term = "";
+			} else {
+				// Save current non-grammar term
+				if (index - 1 == last_grammmar_index) {
+					current_nongrammar_term = query_term
+				} else {
+					current_nongrammar_term += " " + query_term;
+				}
+
+				query_term = '<b>' + query_term + '</b>';
+			}
+
+			new_query_terms.push(query_term);	
+		});
+
+		 query_html = new_query_terms.join(" ");
+	} else {
+		query_html = $search_box.html();
+	}
+
+	// Hacky bug fix: add extra space
+	if (query.trim().length == query.length - 1) {
+		query_html += "&nbsp;";
+	}
+
+	// console.log("grammar term: " + last_grammar_term);
+	// console.log("nonqueryterm: " + current_nongrammar_term);
+
+	$search_box.html(query_html);
+	setEndOfContenteditable($search_box[0]);
+}
+
+// sourcE: http://stackoverflow.com/questions/1125292/how-to-move-cursor-to-end-of-contenteditable-entity
+function setEndOfContenteditable(contentEditableElement)
+{
+    var range,selection;
+    if(document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
+    {
+        range = document.createRange();//Create a range (a range is a like the selection but invisible)
+        range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
+        range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+        selection = window.getSelection();//get the selection object (allows you to change selection)
+        selection.removeAllRanges();//remove any selections already made
+        selection.addRange(range);//make the range you have just created the visible selection
+    }
+    else if(document.selection)//IE 8 and lower
+    { 
+        range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
+        range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
+        range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+        range.select();//Select the range (make it the visible selection
+    }
+}
+
+
+/* DEVICE SPECIFIC OPTIONS */
 function checkIfPhone() {
 	if (isPhone()) {
 		$("#main-container").css("margin-top", 0);
@@ -53,7 +211,7 @@ function getUrlVars() {
 }
 
 function getSearchQuery() {
-	return $("#search-box").val();
+	return $("#search-box").text();
 }
 
 function search(search_query) {
