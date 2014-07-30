@@ -74,7 +74,7 @@ function search(search_query) {
 						formatted_html_email += "<div class='email-result-right'>";
 						formatted_html_email += "<div class='date phone'>" + getDateDisplayString(email.sent_time) + "</div>";
 						formatted_html_email += "<div class='time phone'>" + getTimeDisplayString(email.sent_time) + "</div>";
-						formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
+						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
 				}	
@@ -87,7 +87,7 @@ function search(search_query) {
 						formatted_html_email += "<div class='email-result-right'>";
 						formatted_html_email += "<div class='date'>" + getDateDisplayString(email.sent_time) + "</div>";
 						formatted_html_email += "<div class='time'>" + getTimeDisplayString(email.sent_time) + "</div>";
-						formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
+						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
 				}
