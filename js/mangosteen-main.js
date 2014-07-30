@@ -37,24 +37,19 @@ $(document).ready(function(){
 	}
 	
 	$(document).keypress(function(e) {
-		var query = getSearchQuery();
 		if(e.which == 13) {
+			var query = getSearchQuery();
 			search(query);
-		} else if (!e.shiftKey && !e.ctrlKey) {
-			// Keypress is called before input value is updated :( use setTimeout
-			//setTimeout(function () {
-			//update_search_box(query);
-			//}, 1);
 		}
 	});
 
 	// Keypress is called before input value is updated. Keyup is called after
+	// Doesn't work well with modified keystrokes (e.g. ctrl+a)
 	$search_box.keyup(function(e) {
-		var query = getSearchQuery();
-		
-				update_search_box(query);
-			//}, 1);
-		//}
+		if (e.keyCode != 32) {
+			var query = getSearchQuery();
+			update_search_box(query);
+		}
 	});
 
 	$("#searchButton").click(function() {
@@ -75,21 +70,18 @@ function initAutocomplete() {
       .autocomplete({
         minLength: 0,
         source: function( request, response ) {
-            console.log("request term: "  + request.term);
-          // delegate back to autocomplete, but extract the last term
-          //response( $.ui.autocomplete.filter(
-            //availableTags, extractLast( request.term ) ) );
+            //console.log("request term: "  + request.term);
         	if (last_grammar_term && current_nongrammar_term && autocomplete_grammar_terms.indexOf(last_grammar_term.toLowerCase()) >= 0) {
         		
         		$.get(json_contacts_endpoint + current_nongrammar_term, function(data) {
         			if (data.contacts) {
-        				console.log("autocomplete: " + data.contacts);
+        				//console.log("autocomplete: " + data.contacts);
         				response(data.contacts);
         			} else {
         				response([]);
         			}
         		});
-        		console.log("autocompleting");
+        		//console.log("autocompleting");
         	}
         },
         focus: function() {
@@ -99,12 +91,12 @@ function initAutocomplete() {
         select: function( event, ui ) {
             console.log(this.textContent);
             	var selected = ui.item.value;
-            	var query = getSearchQuery();
+            	var query = $search_box.html();
             	var current_nongrammar_index = query.lastIndexOf(current_nongrammar_term);
             	if (current_nongrammar_index >= 0) {
-            		query = query.substring(0, current_nongrammar_index);
-            		query += selected;
-            		update_search_box(query);
+            		query = query.substring(0, current_nongrammar_index) + selected + query.substring(current_nongrammar_index + current_nongrammar_term.length);
+            		$search_box.html(query);
+            		reset_autocomplete();
             	}
 
 	          	return false;
@@ -112,11 +104,15 @@ function initAutocomplete() {
       });
 }
 
-function update_search_box(query) {
+function reset_autocomplete() {
 	last_grammar_term = "";
 	last_grammmar_index = -1;
 	current_nongrammar_term = "";
+}
 
+// Grammar highlighting
+function update_search_box(query) {
+	reset_autocomplete();
 	var query_terms = query.split(/\s+/);
 	var new_query_terms = [];
 
@@ -142,12 +138,12 @@ function update_search_box(query) {
 	var query_html = new_query_terms.join(" ");
 
 	// Maintain space
-	if (query.trim().length == query.length - 1) {
-		query_html += "&nbsp;";
-	}
+	// if (query.trim().length == query.length - 1) {
+	// 	query_html += "&nbsp;";
+	// }
 
-	console.log("grammar term: " + last_grammar_term);
-	console.log("nonqueryterm: " + current_nongrammar_term);
+	// console.log("grammar term: " + last_grammar_term);
+	// console.log("nonqueryterm: " + current_nongrammar_term);
 
 	$search_box.html(query_html);
 	setEndOfContenteditable($search_box[0]);
