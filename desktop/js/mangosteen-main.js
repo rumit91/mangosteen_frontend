@@ -1,4 +1,5 @@
 var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
+//var json_endpoint = "http://eql.herokuapp.com/parse/from%20timur%20to%20samir%20before%20last%20week"
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
 var json_contacts_endpoint = "http://eql.herokuapp.com/fake/contacts/";
 var queryParamKey = "q";
@@ -219,7 +220,8 @@ function search(search_query) {
 	$.getJSON( json_endpoint, function( data ) {
 		//var server_response = $.parseJSON( data );
 		var server_response = data;
-		if(server_response.result.parse_success) {		
+		if(server_response.result.parse_success) {	
+			showParsingAndTime(server_response.result, server_response.parse_terms);
 			var formatted_html_email_set = "";
 			for(var array_id in server_response.emails)
 			{
@@ -240,9 +242,9 @@ function search(search_query) {
 				}	
 				else {
 					formatted_html_email += "<div class='email-result-left'>";
-						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span><span class='sender-email'> &#60" + email.from.email + "&#62</span></div>";
-						formatted_html_email += "<div class='subject'>" + shortenText(email.subject, false) + "</div>";
-						formatted_html_email += "<div class='preview'>" + shortenText(email.body_preview, false) + "</div>";
+						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span></div>";
+						formatted_html_email += "<div class='subject'>" + email.subject + "</div>";
+						formatted_html_email += "<div class='preview'>" + email.body_preview + "</div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
 						formatted_html_email += "<div class='date'>" + getDateDisplayString(email.sent_time) + "</div>";
@@ -318,5 +320,18 @@ function formatMinutes(minutesInput) {
 	}
 	else {
 		return "00";
+	}
+}
+
+
+function showParsingAndTime(result_meta, parse_terms) {
+	$("#parse-results").empty();
+	var meta_html = "<span class='result-meta'>" + result_meta.count + " results (" + result_meta.duration.toString().substring(0,4) + " sec)";
+	$("#parse-results").append(meta_html);
+	for(var term in parse_terms)
+	{
+		var value = parse_terms[term];
+		var parse_tags_html = "<span class='label label-default label-custom'>" + term + ": " + value + "</span>"
+		$("#parse-results").append(parse_tags_html);
 	}
 }

@@ -50,7 +50,7 @@ body {
 .email-result
 {
 	border: 1px solid black;
-	border-radius: 5px;
+	/*border-radius: 5px;*/
 	overflow: hidden;
 	background-color: rgba(0, 0, 0, 0.75);
 	padding: 10px;
@@ -58,33 +58,45 @@ body {
 }
 .email-result-left {
 	float: left;
-	width: 80%;
+	width: 90%;
 	/*padding-bottom: 20px;*/
 	/*background-color: black;*/
 }
 .email-result-right {
 	float: right;
-	width: 20%;
+	width: 10%;
+	text-align: right;
 	/*background-color: black;*/
 }
 
 .time,
 .date,
 .sender-email,
-.subject,
 .preview
 {
 	font-size: .75em;
 }
-
+.sender-email,
+.preview
+{
+	color: #7e7e7e;
+}
 .sender-email,
 .subject,
 .preview
 {
-	color: #7e7e7e;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
+}
+.sender-name
+{
+	font-size: 1.5em;
+	line-height: 1.1em;
+}
+.subject
+{
+	font-size: .85em;
 }
 
 .time.phone,
@@ -107,3 +119,17 @@ body {
 	height:10px;
 }
 
+.result-meta
+{
+	font-size: 60%;
+	margin-right: 3px;
+	color: #7e7e7e;
+}
+.label.label-default.label-custom
+{
+	margin-right: 3px;
+	font-weight: 500;
+	font-size: 60%;
+	background-color: rgba(0, 0, 0, 0.75);
+	color: #7e7e7e;
+}
