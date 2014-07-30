@@ -25,8 +25,10 @@ $(document).ready(function(){
 
 function checkIfPhone() {
 	if (isPhone()) {
-		$("#query-ui").hide();
 		$("#main-container").css("margin-top", 0);
+	}
+	else {
+		$("#query-ui").removeClass("hide");
 	}
 }
 function isPhone() {
