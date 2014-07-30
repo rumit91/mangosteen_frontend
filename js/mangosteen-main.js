@@ -28,7 +28,7 @@ function checkIfPhone() {
 		$("#main-container").css("margin-top", 0);
 	}
 	else {
-		$("#query-ui").removeClass("hide");
+		$("#query-ui").css("display", "initial");
 	}
 }
 function isPhone() {
