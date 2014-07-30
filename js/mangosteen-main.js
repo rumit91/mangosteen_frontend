@@ -56,14 +56,20 @@ function search(search_query) {
 			{
 				var email = server_response.emails[array_id];
 				var formatted_html_email = '<div class="email-result">';
-				formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span><span class='sender-email'> &#60" + email.from.email + "&#62</span></div>";
-				formatted_html_email += "<div class='subject'>" + email.subject + "</div>";
-				formatted_html_email += "<div class='preview'>" + email.body_preview + "</div>";
-				formatted_html_email += "<div class='time'>Received " + email.sent_time + "</div>";
+					formatted_html_email += "<div class='email-result-left'>";
+						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span><span class='sender-email'> &#60" + email.from.email + "&#62</span></div>";
+						formatted_html_email += "<div class='subject'>" + shortenText(email.subject) + "</div>";
+						formatted_html_email += "<div class='preview'>" + shortenText(email.body_preview) + "</div>";
+					formatted_html_email += "</div>";
+						formatted_html_email += "<div class='email-result-right'>";
+						formatted_html_email += "<div class='date'>" + getDateDisplayString(email.sent_time) + "</div>";
+						formatted_html_email += "<div class='time'>" + getTimeDisplayString(email.sent_time) + "</div>";
+						formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
+						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
+					formatted_html_email += "</div>";
 				formatted_html_email += "</div>";
 				formatted_html_email_set += formatted_html_email;
 			}
-
 			$("#results-label").text("Emails " + search_query);
 			$("#email-container").html(formatted_html_email_set);
 			//$("body").append(formatted_html_email_set);
@@ -75,4 +81,49 @@ function qs(key) {
     key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
     var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
     return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+}
+
+function shortenText(text) {
+	if(text.length < 61) {
+		return text;
+	} else {
+		return text.substring(0,60) + "...";
+	}
+}
+
+function getDateDisplayString(emailTimestamp) {
+	//TODO: more complicated stuff like Mon-Fri based on current date
+	var date = parseDate(emailTimestamp);
+	return 	(date.getMonth()+1) + "/" + date.getDate() + "/" + date	.getFullYear().toString().substring(2);
+}
+
+function parseDate(emailTimestamp) {
+	var date = emailTimestamp.split('T')[0];
+	var parts = date.split('-');
+	// new Date(year, month [, day [, hours[, minutes[, seconds[, ms]]]]])
+	return new Date(parts[0], parts[1]-1, parts[2]);
+}
+
+function getTimeDisplayString(emailTimestamp) {
+	//TODO: AM/PM + "1 hr ago" scenarios
+	var time = parseTime(emailTimestamp);
+	return (time.getHours()) + ":" + formatMinutes(time.getMinutes());
+}
+
+function parseTime(emailTimestamp) {
+	var time = emailTimestamp.split('T')[1];
+	var parts = time.split(':');
+	return new Date(2014,0,1, parts[0], parts[1], parts[2], 0);
+}
+
+function formatMinutes(minutesInput) {
+	if(minutesInput.toString().length == 2) {
+		return minutesInput.toString();
+	}
+	else if(minutesInput.toString().length == 1) {
+		return "0" + minutesInput;
+	}
+	else {
+		return "00";
+	}
 }

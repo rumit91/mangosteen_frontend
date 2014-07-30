@@ -24,23 +24,36 @@ body {
 
 .email-result
 {
-	border-top: 1px #f6f6f6 solid;
-	padding: 10px;
+	/*border-top: 1px #f6f6f6 solid;*/
+	/*padding: 10px;*/
 }
-
+.email-result-left {
+	float: left;
+	width: 80%;
+	padding-bottom: 15px;
+}
+.email-result-right {
+	float: right;
+	width: 20%;
+}
 .time,
-.sender-email
+.date,
+.sender-email,
+.subject,
+.preview
+{
+	font-size: .75em;
+}
+.time,
+.date,
+.sender-email,
+.subject,
+.preview
 {
 	color: #7e7e7e;
 }
-
-.time
+.link-icon 
 {
-	font-size: .7em;
-}
-
-.subject
-{
-	font-size: 1.5em;
-	font-weight: bold;
+	width:10px;
+	height:10px;
 }
