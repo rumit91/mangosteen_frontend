@@ -1,0 +1,88 @@
+body,
+.input-group-addon,
+#searchButton
+{
+	background: #fff;
+	color: #000;
+	font-family: "segoe ui";
+	border: white;
+}
+
+body {
+	font-size: 2em;
+}
+
+#main-container 
+{
+	margin-top: 40px;
+}
+
+#results-label {
+	font-size: 2em;
+	font-weight: lighter;
+	margin-top: 20px;
+}
+#email-container {
+	/*height: 300px;
+	overflow-y: scroll;*/
+}
+.email-result
+{
+	border: 1px solid black;
+	border-radius: 5px;
+	overflow: hidden;
+	background-color: rgba(0, 0, 0, 0.75);
+	padding: 10px;
+	margin: 15px 0 15px 0;
+}
+.email-result-left {
+	float: left;
+	width: 80%;
+	/*padding-bottom: 20px;*/
+	/*background-color: black;*/
+}
+.email-result-right {
+	float: right;
+	width: 20%;
+	/*background-color: black;*/
+}
+
+.time,
+.date,
+.sender-email,
+.subject,
+.preview
+{
+	font-size: .75em;
+}
+
+.sender-email,
+.subject,
+.preview
+{
+	color: #7e7e7e;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.time.phone,
+.date.phone,
+.sender-email.phone,
+.subject.phone,
+.preview.phone
+{
+	font-size: 1em;
+
+}
+.sender-name.phone 
+{
+	font-size: 1.5em;
+}
+
+.link-icon 
+{
+	width:10px;
+	height:10px;
+}
+
