@@ -109,10 +109,10 @@ function qs(key) {
 
 function shortenText(text, isPhone) {
 	if(isPhone) {
-		if(text.length < 30) {
+		if(text.length < 40) {
 			return text;
 		} else {
-			return text.substring(0,29) + "...";
+			return text.substring(0,39) + "...";
 		}
 	} else {
 		if(text.length < 61) {
