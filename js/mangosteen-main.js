@@ -1,4 +1,4 @@
-var json_endpoint = "http://eql.herokuapp.com/fake";
+var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
 var queryParamKey = "q";
 
@@ -108,7 +108,8 @@ function qs(key) {
 }
 
 function shortenText(text, isPhone) {
-	if(isPhone) {
+	return text;
+	/*if(isPhone) {
 		if(text.length < 40) {
 			return text;
 		} else {
@@ -120,7 +121,7 @@ function shortenText(text, isPhone) {
 		} else {
 			return text.substring(0,60) + "...";
 		}
-	}
+	}*/
 }
 
 function getDateDisplayString(emailTimestamp) {

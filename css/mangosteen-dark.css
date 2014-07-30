@@ -51,6 +51,9 @@ body {
 .preview
 {
 	color: #7e7e7e;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .time.phone,
