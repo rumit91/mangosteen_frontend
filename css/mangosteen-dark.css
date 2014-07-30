@@ -1,8 +1,14 @@
-body {
+body,
+.input-group-addon,
+#searchButton
+{
 	background: #000;
 	color: #fff;
-	font-size: 2em;
 	font-family: "segoe ui";	
+}
+
+body {
+	font-size: 2em;
 }
 
 #main-container 
