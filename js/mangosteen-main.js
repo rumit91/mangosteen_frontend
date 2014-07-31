@@ -297,8 +297,8 @@ function search(search_query) {
 							formatted_html_email += "<span class='sender-name'>" + email.from.name + "</span>";
 							formatted_html_email += "<span class='sender-email hide'> &#60" + email.from.email + "&#62</span>";
 							formatted_html_email += "<span class='counts'>";
-								formatted_html_email += "<span class='link-count'><span class='glyphicon glyphicon-link'></span> " + email.links.length + "</span>"
-								formatted_html_email += "<span class='attachment-count'><span class='glyphicon glyphicon-paperclip'></span> " + email.attachment.length + "</span>"
+								formatted_html_email += "<span class='link-count'><span class='glyphicon glyphicon-link'></span> " + (email.links ? email.links.length : 0) + "</span>"
+								formatted_html_email += "<span class='attachment-count'><span class='glyphicon glyphicon-paperclip'></span> " + (email.attachment ? email.attachment.length : 0) + "</span>"
 							formatted_html_email += "</span>";	
 						formatted_html_email += "</div>";
 						formatted_html_email += "<div class='subject'>" + email.subject + "</div>";
@@ -307,7 +307,7 @@ function search(search_query) {
 							formatted_html_email += "<div class='to hide'><span class='to-name'>" + email.to[receiver].name + "</span><span class='to-email'> &#60" + email.to[receiver].email + "&#62</span></div>";
 						}
 						formatted_html_email += "<div class='preview'>" + email.body_preview + "</div>";
-						if(email.links.length > 0) {
+						if(email.links && email.links.length > 0) {
 							formatted_html_email += "<div class='links hide'>";
 							//formatted_html_email += "<div><span class='glyphicon glyphicon-link'></span> Links</div>";
 							for(var link in email.links)
@@ -316,7 +316,7 @@ function search(search_query) {
 							}
 							formatted_html_email += "</div>";
 						}
-						if(email.attachment.length > 0) {
+						if(email.attachment && email.attachment.length > 0) {
 							formatted_html_email += "<div class='attachments hide'>";
 							//formatted_html_email += "<div><span class='glyphicon glyphicon-paperclip'></span> Attachments</div>";
 							for(var attachment in email.attachment)
