@@ -84,7 +84,7 @@ $(document).ready(function(){
 	
 	// hack :(
 	setTimeout(function() {
-		$search_box.width($("#search-container").width() - $(".search-prefix").outerWidth(true));
+		$search_box.width($("#search-container").width() - 271);
 	}, 1);
 
 	$("#dym-container").hide();
