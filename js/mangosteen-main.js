@@ -14,6 +14,14 @@ var last_grammar_term = "";
 var last_grammmar_index = -1;
 var current_nongrammar_term = "";
 
+var curr_placeholder_index = 0;
+var placeholders = [
+	"sent last week from Satya about hackathon",
+	"with word attachment",
+	"to concerts with link to facebook",
+	"from Joyce sent after June 1"
+];
+
 //var json_endpoint = "test.json";
 $(document).ready(function(){
 	$.get(json_terms_endpoint, function(data) {
@@ -43,6 +51,9 @@ $(document).ready(function(){
 			var query = getSearchQuery();
 			search(query);
 			e.preventDefault();
+		} else if (e.which == 32) {
+			var query = getSearchQuery();
+			search(query);
 		}
 	});
 
@@ -59,6 +70,17 @@ $(document).ready(function(){
 	$("#searchButton").click(function() {
 		search(getSearchQuery());
 	});
+
+	// rotate placeholders
+	setInterval(function() {
+		if (++curr_placeholder_index == placeholders.length) {
+			curr_placeholder_index = 0;
+		}
+		//console.log("updating placeholder " + placeholders[curr_placeholder_index]);
+		//$search_box.fadeOut(500);
+		$search_box.attr("placeholder", placeholders[curr_placeholder_index]);
+		//$search_box.fadeIn(500);
+	}, 2500);
 });
 
 /* GRAMMAR HIGHLIGHTING / AUTOCOMPLETE */
@@ -285,8 +307,22 @@ function search(search_query) {
 			}
 			//$("#email-container").html(formatted_html_email_set);
 			//$("body").append(formatted_html_email_set);
+
+			update_dym(server_response.suggestions);
 		}
 	});
+}
+
+function update_dym(suggestion) {
+	var $dym = $("#dym-container");
+	if (server_response.suggestions && server_response.suggestions.length > 0) {
+		// Update query
+
+		// Fire query
+		$dym.fadeIn(500);
+	} else {
+		$dym.hide();
+	}
 }
 
 function qs(key) {

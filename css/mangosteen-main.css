@@ -48,6 +48,11 @@ body {
 	width: 481px;
 }
 
+#search-box[placeholder]:empty:before {
+    content: attr(placeholder);
+    opacity: 0.5;
+}
+
 .search-query {
 	display: inline-block;
 }
