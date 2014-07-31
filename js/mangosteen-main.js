@@ -91,6 +91,7 @@ $(document).ready(function(){
 	$("#dym-container").hide();
 	var $suggestion = $("#dym-suggestion");
 	$suggestion.click(function() {
+		$("#dym-container").fadeOut(500);
 		var suggestion_text = $suggestion.text();
 		update_search_box(suggestion_text, false);
 		search(suggestion_text);
