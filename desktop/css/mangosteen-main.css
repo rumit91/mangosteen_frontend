@@ -94,14 +94,16 @@ body {
 .day,
 .sender-email,
 .preview,
-.body
+.body,
+.to
 {
 	font-size: .75em;
 }
 
 .sender-email,
 .subject,
-.preview
+.preview,
+.to
 {
 	color: #afafaf;
 	text-overflow: ellipsis;
@@ -157,4 +159,20 @@ body {
 .email-details-expander
 {
 	margin-top: 12px;
+}
+
+.html-email-iframe {
+	scrolling: no;
+	border: 0;
+	width:100%;
+	height: 500px;
+}
+
+.search-prefix {
+	display: inline-block;
+	vertical-align: top;
+	padding-right: 7px;
+}
+.add-bottom-margin {
+	margin-bottom: 15px;
 }
