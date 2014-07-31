@@ -358,16 +358,16 @@ function update_dym(suggestion) {
 		// Update query
 		var text = suggestion[0];
 
-		suggestion.forEach(function(indicesString, index) {
-			if (index > 0) {
-				var indices = indicesString.split(",");
-				var start = parseInt(indices[0]);
-				var length = parseInt(indices[1]);
-				var highlight = '<em><strong>' + text.substr(start, length) + '</em></strong>';
-				text = text.substring(0, start) + highlight + text.substring(start + length);
-			}
-		});
-
+		// too high-risk with -1 bug
+		// suggestion.forEach(function(indicesString, index) {
+		// 	if (index > 0) {
+		// 		var indices = indicesString.split(",");
+		// 		var start = parseInt(indices[0]);
+		// 		var length = parseInt(indices[1]);
+		// 		var highlight = '<em><strong>' + text.substr(start, length) + '</em></strong>';
+		// 		text = text.substring(0, start) + highlight + text.substring(start + length);
+		// 	}
+		// });
 
 		$("#dym-suggestion").html(text);
 
