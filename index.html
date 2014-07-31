@@ -1,61 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Mangosteen Prototype</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <!-- Bootstrap -->
+    <title>Mangosteen - Natural Language Email Search</title>
+
+    <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-	<link href="css/mangosteen-dark.css" rel="stylesheet">
 
+    <!-- Custom CSS -->
+    <link href="css/grayscale.css" rel="stylesheet">
+	<link href="css/mangosteen-main.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.4/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-  	<link href="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.4/themes/ui-darkness/jquery-ui.css" rel="stylesheet">
-  </head>
-  <body>
-	<div id="main-container">
-		<div class="row" id="query-ui" style="display: none">
-			<div class="col-md-3">
-			</div>
-			<div class="col-md-6">
-				<div class="input-group input-group-lg">
-					<span class="input-group-addon">
-						<span class="glyphicon glyphicon-search"></span>
-						&nbsp;Show me emails
-					</span>
-					<div id="search-box" type="text" class="form-control" contenteditable="true" placeholder="ex last week from Samir with an attachment..."></div>
-					<span class="input-group-btn">
-						<button id="searchButton" class="btn btn-default" type="button">Go!</button>
-					</span>
+
+</head>
+
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">
+                    Mangosteen
+                </a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+                <ul class="nav navbar-nav">
+                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#about">About</a>
+                    </li>
+                </ul>
+				<form class="navbar-form navbar-right">
+					<button class="btn btn-default">I want this for my inbox!</button>
+				</form>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Intro Header -->
+    <header class="intro">
+        <div class="intro-body">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+                        <!--
+						<h1 class="brand-heading">Grayscale</h1>
+                        <p class="intro-text">A free, responsive, one page Bootstrap theme.<br>Created by Start Bootstrap.</p>
+                        <a href="#about" class="btn btn-circle page-scroll">
+                            <i class="fa fa-angle-double-down animated"></i>
+                        </a>
+						-->
+						<div id="search-container" class="input-group input-group-lg">
+							<span class="search-prefix">
+                                <span id="search-icon-container">
+								    <span class="glyphicon glyphicon-search"></span>
+								</span>
+                                
+                                &nbsp;Show me emails
+							</span>
+							<div id="search-box" type="text" class="search-query" contenteditable="true" placeholder="ex last week from Samir with an attachment..."></div>
+							<!--<span class="input-group-btn">
+								<button id="searchButton" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-search"></span></button>
+							</span>-->
+						</div>
+                    </div>
+                </div>
+				<div class="row">
+                    <div class="col-md-8 col-md-offset-2">
+						<div id="parse-results"></div>
+						<div id="email-container">
+						</div>
+					</div>
 				</div>
-			</div>
-			<div class="col-md-3">
-			</div>
-		</div>
-		<div class = "row">
-			<div class="col-md-3">
-			</div>
-			<div class="col-md-6">
-				<div id='results-label'></div>
-				<div id="email-container">
-				</div>
-			</div>
-			<div class="col-md-3">
-			</div>
-		</div>
-	</div>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+            </div>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="about" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>Mangosteen</h2>
+                <h4>Humanizing Your Inbox</h4>
+                <p>
+                   Mangosteen is a natural language query for all your emails. 
+                   <br> 
+                   Offering smart autocomplete, contacts and advanced link and attachment search.
+                   <br> 
+                </p>
+
+            </div>
+        </div>
+    </section>
+    
+    <!-- Example Section -->
+    <section id="example" class="content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h3>Search Made Simple</h3>
+                <h4> Magically Turning Your Sentence Into Code</h4>
+                <blockquote>"show me emails from <em>Mark</em> sent before <em>June</em> with links to <em>facebook</em> about <em>jenny's birthday"</em></blockquote>
+                <code class="codeline">Sender: 'Mark'</code>
+                <code class="codeline">Date: 'BEFORE 06/01/14'</code>
+                <code class="codeline">Link:'facebook'</code>
+                <code class="codeline">Query: 'jenny's birthday'</code>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Technical Section -->
+    <section id="technical" class="container content-section text-center">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2">
+                <h2>How it works</h2>
+                <h4>We Use Natural Language Processing to understand your query</h4>
+                <img class="diagram" src="./img/tree.png"><hr/>
+                <h4>Then Augment your Query</h4>
+                <img class="diagram" src="./img/augment.png"><hr/>
+                <h4>Using the augmented Query we make intelligent email searches</h4>
+                <img class="diagram" src="./img/elasticsearch.png">
+            </div>
+        </div>
+    </section>
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>Mangosteen 2014</p>
+        </div>
+    </footer>
+
+    <!-- jQuery Version 1.11.0 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.4/jquery-ui.js"></script>
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="js/jquery.easing.min.js"></script>
+    
+    <!-- Custom Theme JavaScript -->
+    <script src="js/grayscale.js"></script>
+	
 	<script src="js/mangosteen-main.js"></script>
-  </body>
+
+</body>
+
+
 </html>

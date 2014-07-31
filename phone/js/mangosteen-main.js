@@ -1,9 +1,6 @@
-//var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
-//var json_endpoint = "http://eql.herokuapp.com/parse/from%20timur%20to%20samir%20before%20last%20week"
-//var json_endpoint = "http://eql.herokuapp.com/parse/about%20microsoft%20with%20links%20to%20facebook"
-var json_endpoint = "http://eql.herokuapp.com/parse/";
+var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
-var json_contacts_endpoint = "http://eql.herokuapp.com/contacts/";
+var json_contacts_endpoint = "http://eql.herokuapp.com/fake/contacts/";
 var queryParamKey = "q";
 var grammar_terms;
 var $search_box;
@@ -42,7 +39,6 @@ $(document).ready(function(){
 		if(e.which == 13) {
 			var query = getSearchQuery();
 			search(query);
-			e.preventDefault();
 		}
 	});
 
@@ -70,14 +66,9 @@ function initAutocomplete() {
             $( this ).autocomplete( "instance" ).menu.active ) {
           event.preventDefault();
         }
-		else if ( event.keyCode === 13) 
-		{
-			this.blur();
-			setEndOfContenteditable(this);
-		}
       })
       .autocomplete({
-        minLength: 2,
+        minLength: 0,
         source: function( request, response ) {
             //console.log("request term: "  + request.term);
         	if (last_grammar_term && current_nongrammar_term && autocomplete_grammar_terms.indexOf(last_grammar_term.toLowerCase()) >= 0) {
@@ -127,10 +118,7 @@ function update_search_box(query, lastLetterIsSpace) {
 	// Only run processing if last letter was not a space
 	if (!lastLetterIsSpace) {
 		reset_autocomplete();
-		var query_terms = query.split(/\s+/).filter(function (term) {
-			return term.length > 0;
-		});
-
+		var query_terms = query.split(/\s+/);
 		var new_query_terms = [];
 
 		query_terms.forEach(function(query_term, index) {
@@ -228,19 +216,15 @@ function getSearchQuery() {
 
 function search(search_query) {
 	console.log("Searching for " + search_query);
-	$("#email-container").empty();
-	$.getJSON( json_endpoint + search_query, function( data ) {
+	$.getJSON( json_endpoint, function( data ) {
 		//var server_response = $.parseJSON( data );
 		var server_response = data;
-		if(server_response.result.parse_success) {	
-			showParsingAndTime(server_response.result, server_response.parse_terms);
-			//var formatted_html_email_set = "";
+		if(server_response.result.parse_success) {		
+			var formatted_html_email_set = "";
 			for(var array_id in server_response.emails)
 			{
 				var email = server_response.emails[array_id];
 				var formatted_html_email = '<div class="email-result">';
-				var date_time = new Date(email.sent_time);
-
 				if(isPhone()) {
 					formatted_html_email += "<div class='email-result-left'>";
 						formatted_html_email += "<div class='sender phone'><span class='sender-name phone'>" + email.from.name + "</span></div>";
@@ -248,42 +232,30 @@ function search(search_query) {
 						formatted_html_email += "<div class='preview phone'>" + shortenText(email.body_preview, true) + "</div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
-						formatted_html_email += "<div class='date phone'>" + getDateDisplayString(date_time) + "</div>";
-						formatted_html_email += "<div class='time phone'>" + getTimeDisplayString(date_time) + "</div>";
+						formatted_html_email += "<div class='date phone'>" + getDateDisplayString(email.sent_time) + "</div>";
+						formatted_html_email += "<div class='time phone'>" + getTimeDisplayString(email.sent_time) + "</div>";
 						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
 				}	
 				else {
 					formatted_html_email += "<div class='email-result-left'>";
-						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span><span class='sender-email hide'> &#60" + email.from.email + "&#62</span></div>";
-						formatted_html_email += "<div class='subject'>" + email.subject + "</div>";
-						for(var receiver in email.to)
-						{
-							formatted_html_email += "<div class='to hide'><span class='to-name'>" + email.to[receiver].name + "</span><span class='to-email'> &#60" + email.to[receiver].email + "&#62</span></div>";
-						}
-						formatted_html_email += "<div class='preview'>" + email.body_preview + "</div>";
-						formatted_html_email += "<div class='body hide'><hr />" + email.body + "</div>";
-						//formatted_html_email += "<div class='html-body hide'><iframe class='html-email-iframe'></iframe></div>";
+						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span><span class='sender-email'> &#60" + email.from.email + "&#62</span></div>";
+						formatted_html_email += "<div class='subject'>" + shortenText(email.subject, false) + "</div>";
+						formatted_html_email += "<div class='preview'>" + shortenText(email.body_preview, false) + "</div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
-						formatted_html_email += "<div class='date'>" + getDateDisplayString(date_time) + "</div>";
-						formatted_html_email += "<div class='time'>" + getTimeDisplayString(date_time) + "</div>";
-						formatted_html_email += "<span class='email-details-expander glyphicon glyphicon-chevron-up'></span>";
+						formatted_html_email += "<div class='date'>" + getDateDisplayString(email.sent_time) + "</div>";
+						formatted_html_email += "<div class='time'>" + getTimeDisplayString(email.sent_time) + "</div>";
 						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
 				}
 				formatted_html_email += "</div>";
-				$("#email-container").append(formatted_html_email);
-				
-				//console.log(email.html_body);
-				//var email_iframe = $("#email-container").find(".email-result").last().find(".html-email-iframe");
-				//console.log(email_iframe);
-				//email_iframe.contents().find('body').replaceWith(email.html_body);
-				//formatted_html_email_set += formatted_html_email;
+				formatted_html_email_set += formatted_html_email;
 			}
-			//$("#email-container").html(formatted_html_email_set);
+			$("#results-label").text("Emails " + search_query);
+			$("#email-container").html(formatted_html_email_set);
 			//$("body").append(formatted_html_email_set);
 		}
 	});
@@ -312,22 +284,29 @@ function shortenText(text, isPhone) {
 	}*/
 }
 
-function getDayOfWeek(date) {
-  return ["Sunday", "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"][date.getDay()];
-};
-
-function getDateDisplayString(date) {
-	var daysSince = (Date.now() - date) / (1000*60*60*24);
-	return daysSince < 7 ? getDayOfWeek(date) : date.toLocaleDateString();
+function getDateDisplayString(emailTimestamp) {
+	//TODO: more complicated stuff like Mon-Fri based on current date
+	var date = parseDate(emailTimestamp);
+	return 	(date.getMonth()+1) + "/" + date.getDate() + "/" + date	.getFullYear().toString().substring(2);
 }
 
-function getTimeDisplayString(time) {
-	// //TODO: AM/PM + "1 hr ago" scenarios
-	// var time = parseTime(emailTimestamp);
-	// return (time.getHours()) + ":" + formatMinutes(time.getMinutes());
-	var localeTimeString = time.toLocaleTimeString().toString();
-	var parts = localeTimeString.split(":");
-	return parts[0] + ":" + parts[1] + " " + parts[2].substring(3,5);
+function parseDate(emailTimestamp) {
+	var date = emailTimestamp.split('T')[0];
+	var parts = date.split('-');
+	// new Date(year, month [, day [, hours[, minutes[, seconds[, ms]]]]])
+	return new Date(parts[0], parts[1]-1, parts[2]);
+}
+
+function getTimeDisplayString(emailTimestamp) {
+	//TODO: AM/PM + "1 hr ago" scenarios
+	var time = parseTime(emailTimestamp);
+	return (time.getHours()) + ":" + formatMinutes(time.getMinutes());
+}
+
+function parseTime(emailTimestamp) {
+	var time = emailTimestamp.split('T')[1];
+	var parts = time.split(':');
+	return new Date(2014,0,1, parts[0], parts[1], parts[2], 0);
 }
 
 function formatMinutes(minutesInput) {
@@ -341,40 +320,3 @@ function formatMinutes(minutesInput) {
 		return "00";
 	}
 }
-
-
-function showParsingAndTime(result_meta, parse_terms) {
-	$("#parse-results").empty();
-	var meta_html = "<span class='result-meta'>" + result_meta.count + " results (" + result_meta.duration.toString().substring(0,4) + " sec)";
-	$("#parse-results").append(meta_html);
-	for(var term in parse_terms)
-	{
-		var value = parse_terms[term];
-		var parse_tags_html = "<span class='label label-default label-custom'>" + term + ": " + value + "</span>"
-		$("#parse-results").append(parse_tags_html);
-	}
-}
-$(document).on('click', '.email-details-expander', function () {
-	if( $(this).hasClass("glyphicon-chevron-up")) {
-		$(this).removeClass("glyphicon-chevron-up");
-		$(this).addClass("glyphicon-chevron-down");
-		var email_html = $(this).parentsUntil(".email-result").parent();
-		email_html.find(".body").removeClass("hide");
-		email_html.find(".preview").addClass("hide");
-		email_html.find(".sender-email").removeClass("hide");
-		email_html.find(".subject").addClass("add-bottom-margin");
-		email_html.find(".to").removeClass("hide");
-		//email_html.find(".html-body").removeClass("hide");
-	}
-	else if ( $(this).hasClass("glyphicon-chevron-down")) {
-		$(this).removeClass("glyphicon-chevron-down");
-		$(this).addClass("glyphicon-chevron-up");
-		var email_html = $(this).parentsUntil(".email-result").parent();
-		email_html.find(".preview").removeClass("hide");
-		email_html.find(".body").addClass("hide");
-		email_html.find(".sender-email").addClass("hide");
-		email_html.find(".to").addClass("hide");
-		email_html.find(".subject").removeClass("add-bottom-margin");
-		//email_html.find(".html-body").addClass("hide");
-	}
-});
