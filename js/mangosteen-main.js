@@ -16,10 +16,11 @@ var current_nongrammar_term = "";
 
 var curr_placeholder_index = 0;
 var placeholders = [
-	"sent last week from Satya about hackathon",
-	"with word attachment",
-	"to concerts with link to facebook",
-	"from Joyce sent after June 1"
+	"sent by Satya about One Week",
+	"with word attachments",
+	"with links to stubhub",
+	"sent yesterday from Evan",
+	"with pictures attached"
 ];
 
 //var json_endpoint = "test.json";
@@ -88,6 +89,12 @@ $(document).ready(function(){
 	}, 1);
 
 	$("#dym-container").hide();
+	var $suggestion = $("#dym-suggestion");
+	$suggestion.click(function() {
+		var suggestion_text = $suggestion.text();
+		update_search_box(suggestion_text, false);
+		search(suggestion_text);
+	});
 });
 
 /* GRAMMAR HIGHLIGHTING / AUTOCOMPLETE */
@@ -340,22 +347,36 @@ function search(search_query) {
 			//$("#email-container").html(formatted_html_email_set);
 			//$("body").append(formatted_html_email_set);
 
-			//update_dym(server_response.suggestions);
+			update_dym(server_response.suggestions);
 		}
 	});
 }
 
-// function update_dym(suggestion) {
-// 	var $dym = $("#dym-container");
-// 	if (server_response.suggestions && server_response.suggestions.length > 0) {
-// 		// Update query
+function update_dym(suggestion) {
+	var $dym = $("#dym-container");
+	if (suggestion && suggestion.length > 0) {
+		// Update query
+		var text = suggestion[0];
 
-// 		// Fire query
-// 		$dym.fadeIn(500);
-// 	} else {
-// 		$dym.hide();
-// 	}
-// }
+		suggestion.forEach(function(indicesString, index) {
+			if (index > 0) {
+				var indices = indicesString.split(",");
+				var start = parseInt(indices[0]);
+				var length = parseInt(indices[1]);
+				var highlight = '<em><strong>' + text.substr(start, length) + '</em></strong>';
+				text = text.substring(0, start) + highlight + text.substring(start + length);
+			}
+		});
+
+
+		$("#dym-suggestion").html(text);
+
+		// Fire query
+		$dym.fadeIn(500);
+	} else {
+		$dym.hide();
+	}
+}
 
 function qs(key) {
     key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars

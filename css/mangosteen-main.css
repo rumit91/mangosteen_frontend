@@ -209,3 +209,11 @@ em {
 	font-weight: bold;
 	color: whitesmoke;
 }
+
+#dym-container {
+	padding-top: 5px;
+}
+
+#dym-suggestion {
+	text-decoration: underline;
+}
