@@ -1,0 +1,7 @@
+
+#********** vim template********** 
+
+.*.sw[a-z]
+*.un~
+Session.vim
+ 

@@ -345,7 +345,7 @@ function formatMinutes(minutesInput) {
 
 function showParsingAndTime(result_meta, parse_terms) {
 	$("#parse-results").empty();
-	var meta_html = "<span class='result-meta'>" + result_meta.count + " results (" + result_meta.duration.toString().substring(0,4) + " sec)";
+	var meta_html = "<span class='result-meta'>Showing " + result_meta.count + " of " + result_meta.total + " results (" + result_meta.duration.toString().substring(0,4) + " sec)";
 	$("#parse-results").append(meta_html);
 	for(var term in parse_terms)
 	{
