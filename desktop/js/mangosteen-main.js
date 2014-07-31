@@ -1,10 +1,7 @@
 //var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
 //var json_endpoint = "http://eql.herokuapp.com/parse/from%20timur%20to%20samir%20before%20last%20week"
-<<<<<<< HEAD
-var json_endpoint = "http://eql.herokuapp.com/parse/about%20microsoft"
-=======
+
 var json_endpoint = "http://eql.herokuapp.com/parse/";
->>>>>>> b71b36b8fb3d5b72c2e3676b64bbd5fbbf977301
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
 var json_contacts_endpoint = "http://eql.herokuapp.com/fake/contacts/";
 var queryParamKey = "q";
@@ -260,15 +257,10 @@ function search(search_query) {
 						formatted_html_email += "<div class='body hide'><hr />" + email.body + "</div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
-<<<<<<< HEAD
-						formatted_html_email += "<div class='date'>" + getDateDisplayString(email.sent_time) + "</div>";
-						formatted_html_email += "<div class='time'>" + getTimeDisplayString(email.sent_time) + "</div>";
-						formatted_html_email += "<span class='email-details-expander glyphicon glyphicon-chevron-up'></span>";
-=======
 						formatted_html_email += "<div class='date'>" + getDateDisplayString(date_time) + "</div>";
 						formatted_html_email += "<div class='day'>" + getDayOfWeek(date_time) + "</div>";
 						formatted_html_email += "<div class='time'>" + getTimeDisplayString(date_time) + "</div>";
->>>>>>> b71b36b8fb3d5b72c2e3676b64bbd5fbbf977301
+						formatted_html_email += "<span class='email-details-expander glyphicon glyphicon-chevron-up'></span>";
 						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
