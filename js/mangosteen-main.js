@@ -474,3 +474,7 @@ $(document).on('click', '.email-details-expander', function () {
 		//email_html.find(".html-body").addClass("hide");
 	}
 });
+$("#want-button").click(function (event) {
+	event.preventDefault();
+	$('#myModal').modal('show');
+});

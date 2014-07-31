@@ -35,6 +35,23 @@
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
 
+	<div class="modal fade" id="myModal" role="dialog">
+	  <div class="modal-dialog">
+		<div class="modal-content">
+		  <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+			<h4 class="modal-title">Woah!</h4>
+		  </div>
+		  <div class="modal-body">
+			<p>We only had 48 hours to work on this prototype. If you are interested please let us know by filling out this <a href="https://onedrive.live.com/redir?page=survey&resid=C2F6E67CD05CA99F!133950&authkey=!AEl4mphhsaxQkGY&ithint=file%2cxlsx" target="_BLANK">survey</a>.</p>
+		  </div>
+		  <div class="modal-footer">
+			<button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
+		  </div>
+		</div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+	
     <!-- Navigation -->
     <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
         <div class="container">
@@ -59,7 +76,7 @@
                     </li>
                 </ul>
 				<form class="navbar-form navbar-right">
-					<button class="btn btn-default">I want this for my inbox!</button>
+					<button class="btn btn-default" id="want-button">I want this for my inbox!</button>
 				</form>
             </div>
             <!-- /.navbar-collapse -->
@@ -155,7 +172,7 @@
             <p>Mangosteen 2014</p>
         </div>
     </footer>
-
+	
     <!-- jQuery Version 1.11.0 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.ui/1.10.4/jquery-ui.js"></script>
