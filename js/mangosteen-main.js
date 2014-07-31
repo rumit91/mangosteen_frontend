@@ -28,7 +28,7 @@ $(document).ready(function(){
 	checkIfPhone();
 
 	$search_box = $("#search-box");
-
+	
 	// Lookup if query string param was passed
 	var query;
 	if (query = qs(queryParamKey)) {
@@ -59,6 +59,11 @@ $(document).ready(function(){
 	$("#searchButton").click(function() {
 		search(getSearchQuery());
 	});
+	
+	// hack :(
+	setTimeout(function() {
+		$search_box.width($("#search-container").width() - $(".search-prefix").outerWidth(true));
+	}, 1);
 });
 
 /* GRAMMAR HIGHLIGHTING / AUTOCOMPLETE */
