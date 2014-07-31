@@ -70,7 +70,7 @@ $(document).ready(function(){
 	$("#searchButton").click(function() {
 		search(getSearchQuery());
 	});
-	
+
 	// rotate placeholders
 	setInterval(function() {
 		if (++curr_placeholder_index == placeholders.length) {
@@ -338,22 +338,22 @@ function search(search_query) {
 			//$("#email-container").html(formatted_html_email_set);
 			//$("body").append(formatted_html_email_set);
 
-			update_dym(server_response.suggestions);
+			//update_dym(server_response.suggestions);
 		}
 	});
 }
 
-function update_dym(suggestion) {
-	var $dym = $("#dym-container");
-	if (server_response.suggestions && server_response.suggestions.length > 0) {
-		// Update query
+// function update_dym(suggestion) {
+// 	var $dym = $("#dym-container");
+// 	if (server_response.suggestions && server_response.suggestions.length > 0) {
+// 		// Update query
 
-		// Fire query
-		$dym.fadeIn(500);
-	} else {
-		$dym.hide();
-	}
-}
+// 		// Fire query
+// 		$dym.fadeIn(500);
+// 	} else {
+// 		$dym.hide();
+// 	}
+// }
 
 function qs(key) {
     key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
