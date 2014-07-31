@@ -17,7 +17,7 @@ var current_nongrammar_term = "";
 var curr_placeholder_index = 0;
 var placeholders = [
 	"sent by Satya about One Week",
-	"with word attachments",
+	"with excel attachments",
 	"with links to stubhub",
 	"sent yesterday from Evan",
 	"with pictures attached"
