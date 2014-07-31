@@ -1,9 +1,9 @@
 //var json_endpoint = "http://eql.herokuapp.com/parse/fake/test";
 //var json_endpoint = "http://eql.herokuapp.com/parse/from%20timur%20to%20samir%20before%20last%20week"
-
+//var json_endpoint = "http://eql.herokuapp.com/parse/about%20microsoft%20with%20links%20to%20facebook"
 var json_endpoint = "http://eql.herokuapp.com/parse/";
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
-var json_contacts_endpoint = "http://eql.herokuapp.com/fake/contacts/";
+var json_contacts_endpoint = "http://eql.herokuapp.com/contacts/";
 var queryParamKey = "q";
 var grammar_terms;
 var $search_box;
@@ -70,9 +70,14 @@ function initAutocomplete() {
             $( this ).autocomplete( "instance" ).menu.active ) {
           event.preventDefault();
         }
+		else if ( event.keyCode === 13) 
+		{
+			this.blur();
+			setEndOfContenteditable(this);
+		}
       })
       .autocomplete({
-        minLength: 0,
+        minLength: 2,
         source: function( request, response ) {
             //console.log("request term: "  + request.term);
         	if (last_grammar_term && current_nongrammar_term && autocomplete_grammar_terms.indexOf(last_grammar_term.toLowerCase()) >= 0) {
@@ -223,12 +228,13 @@ function getSearchQuery() {
 
 function search(search_query) {
 	console.log("Searching for " + search_query);
+	$("#email-container").empty();
 	$.getJSON( json_endpoint + search_query, function( data ) {
 		//var server_response = $.parseJSON( data );
 		var server_response = data;
 		if(server_response.result.parse_success) {	
 			showParsingAndTime(server_response.result, server_response.parse_terms);
-			var formatted_html_email_set = "";
+			//var formatted_html_email_set = "";
 			for(var array_id in server_response.emails)
 			{
 				var email = server_response.emails[array_id];
@@ -243,7 +249,6 @@ function search(search_query) {
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
 						formatted_html_email += "<div class='date phone'>" + getDateDisplayString(date_time) + "</div>";
-						formatted_html_email += "<div class='day phone'>" + getDayOfWeek(date_time) + "</div>";
 						formatted_html_email += "<div class='time phone'>" + getTimeDisplayString(date_time) + "</div>";
 						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
@@ -253,12 +258,16 @@ function search(search_query) {
 					formatted_html_email += "<div class='email-result-left'>";
 						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span><span class='sender-email hide'> &#60" + email.from.email + "&#62</span></div>";
 						formatted_html_email += "<div class='subject'>" + email.subject + "</div>";
+						for(var receiver in email.to)
+						{
+							formatted_html_email += "<div class='to hide'><span class='to-name'>" + email.to[receiver].name + "</span><span class='to-email'> &#60" + email.to[receiver].email + "&#62</span></div>";
+						}
 						formatted_html_email += "<div class='preview'>" + email.body_preview + "</div>";
 						formatted_html_email += "<div class='body hide'><hr />" + email.body + "</div>";
+						//formatted_html_email += "<div class='html-body hide'><iframe class='html-email-iframe'></iframe></div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
 						formatted_html_email += "<div class='date'>" + getDateDisplayString(date_time) + "</div>";
-						formatted_html_email += "<div class='day'>" + getDayOfWeek(date_time) + "</div>";
 						formatted_html_email += "<div class='time'>" + getTimeDisplayString(date_time) + "</div>";
 						formatted_html_email += "<span class='email-details-expander glyphicon glyphicon-chevron-up'></span>";
 						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
@@ -266,9 +275,15 @@ function search(search_query) {
 					formatted_html_email += "</div>";
 				}
 				formatted_html_email += "</div>";
-				formatted_html_email_set += formatted_html_email;
+				$("#email-container").append(formatted_html_email);
+				
+				//console.log(email.html_body);
+				//var email_iframe = $("#email-container").find(".email-result").last().find(".html-email-iframe");
+				//console.log(email_iframe);
+				//email_iframe.contents().find('body').replaceWith(email.html_body);
+				//formatted_html_email_set += formatted_html_email;
 			}
-			$("#email-container").html(formatted_html_email_set);
+			//$("#email-container").html(formatted_html_email_set);
 			//$("body").append(formatted_html_email_set);
 		}
 	});
@@ -302,17 +317,17 @@ function getDayOfWeek(date) {
 };
 
 function getDateDisplayString(date) {
-	//TODO: more complicated stuff like Mon-Fri based on current date
-	// var date = parseDate(emailTimestamp);
-	// return 	(date.getMonth()+1) + "/" + date.getDate() + "/" + date	.getFullYear().toString().substring(2);
-	return date.toLocaleDateString();
+	var daysSince = (Date.now() - date) / (1000*60*60*24);
+	return daysSince < 7 ? getDayOfWeek(date) : date.toLocaleDateString();
 }
 
 function getTimeDisplayString(time) {
 	// //TODO: AM/PM + "1 hr ago" scenarios
 	// var time = parseTime(emailTimestamp);
 	// return (time.getHours()) + ":" + formatMinutes(time.getMinutes());
-	return time.toLocaleTimeString();
+	var localeTimeString = time.toLocaleTimeString().toString();
+	var parts = localeTimeString.split(":");
+	return parts[0] + ":" + parts[1] + " " + parts[2].substring(3,5);
 }
 
 function formatMinutes(minutesInput) {
@@ -345,15 +360,21 @@ $(document).on('click', '.email-details-expander', function () {
 		$(this).addClass("glyphicon-chevron-down");
 		var email_html = $(this).parentsUntil(".email-result").parent();
 		email_html.find(".body").removeClass("hide");
-		email_html.find(".sender-email").removeClass("hide");
 		email_html.find(".preview").addClass("hide");
+		email_html.find(".sender-email").removeClass("hide");
+		email_html.find(".subject").addClass("add-bottom-margin");
+		email_html.find(".to").removeClass("hide");
+		//email_html.find(".html-body").removeClass("hide");
 	}
 	else if ( $(this).hasClass("glyphicon-chevron-down")) {
 		$(this).removeClass("glyphicon-chevron-down");
 		$(this).addClass("glyphicon-chevron-up");
 		var email_html = $(this).parentsUntil(".email-result").parent();
 		email_html.find(".preview").removeClass("hide");
-		email_html.find(".sender-email").addClass("hide");
 		email_html.find(".body").addClass("hide");
+		email_html.find(".sender-email").addClass("hide");
+		email_html.find(".to").addClass("hide");
+		email_html.find(".subject").removeClass("add-bottom-margin");
+		//email_html.find(".html-body").addClass("hide");
 	}
 });
