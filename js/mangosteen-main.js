@@ -36,7 +36,7 @@ $(document).ready(function(){
 	checkIfPhone();
 
 	$search_box = $("#search-box");
-
+	
 	// Lookup if query string param was passed
 	var query;
 	if (query = qs(queryParamKey)) {
@@ -70,7 +70,7 @@ $(document).ready(function(){
 	$("#searchButton").click(function() {
 		search(getSearchQuery());
 	});
-
+	
 	// rotate placeholders
 	setInterval(function() {
 		if (++curr_placeholder_index == placeholders.length) {
@@ -81,6 +81,11 @@ $(document).ready(function(){
 		$search_box.attr("placeholder", placeholders[curr_placeholder_index]);
 		//$search_box.fadeIn(500);
 	}, 2500);
+	
+	// hack :(
+	setTimeout(function() {
+		$search_box.width($("#search-container").width() - $(".search-prefix").outerWidth(true));
+	}, 1);
 });
 
 /* GRAMMAR HIGHLIGHTING / AUTOCOMPLETE */
@@ -278,20 +283,45 @@ function search(search_query) {
 				}	
 				else {
 					formatted_html_email += "<div class='email-result-left'>";
-						formatted_html_email += "<div class='sender'><span class='sender-name'>" + email.from.name + "</span><span class='sender-email hide'> &#60" + email.from.email + "&#62</span></div>";
+						formatted_html_email += "<div class='sender'>";
+							formatted_html_email += "<span class='sender-name'>" + email.from.name + "</span>";
+							formatted_html_email += "<span class='sender-email hide'> &#60" + email.from.email + "&#62</span>";
+							formatted_html_email += "<span class='counts'>";
+								formatted_html_email += "<span class='link-count'><span class='glyphicon glyphicon-link'></span> " + email.links.length + "</span>"
+								formatted_html_email += "<span class='attachment-count'><span class='glyphicon glyphicon-paperclip'></span> " + email.attachment.length + "</span>"
+							formatted_html_email += "</span>";	
+						formatted_html_email += "</div>";
 						formatted_html_email += "<div class='subject'>" + email.subject + "</div>";
 						for(var receiver in email.to)
 						{
 							formatted_html_email += "<div class='to hide'><span class='to-name'>" + email.to[receiver].name + "</span><span class='to-email'> &#60" + email.to[receiver].email + "&#62</span></div>";
 						}
 						formatted_html_email += "<div class='preview'>" + email.body_preview + "</div>";
+						if(email.links.length > 0) {
+							formatted_html_email += "<div class='links hide'>";
+							//formatted_html_email += "<div><span class='glyphicon glyphicon-link'></span> Links</div>";
+							for(var link in email.links)
+							{
+								formatted_html_email += "<div class='link'><span class='glyphicon glyphicon-link'></span> <a href='" + email.links[link] + "'>" + email.links[link] + "</a></div>";
+							}
+							formatted_html_email += "</div>";
+						}
+						if(email.attachment.length > 0) {
+							formatted_html_email += "<div class='attachments hide'>";
+							//formatted_html_email += "<div><span class='glyphicon glyphicon-paperclip'></span> Attachments</div>";
+							for(var attachment in email.attachment)
+							{
+								formatted_html_email += "<div class='attachment'><span class='glyphicon glyphicon-paperclip'></span> " + email.attachment[attachment] + "</div>";
+							}
+							formatted_html_email += "</div>";
+						}
 						formatted_html_email += "<div class='body hide'><hr />" + email.body + "</div>";
 						//formatted_html_email += "<div class='html-body hide'><iframe class='html-email-iframe'></iframe></div>";
 					formatted_html_email += "</div>";
 						formatted_html_email += "<div class='email-result-right'>";
 						formatted_html_email += "<div class='date'>" + getDateDisplayString(date_time) + "</div>";
 						formatted_html_email += "<div class='time'>" + getTimeDisplayString(date_time) + "</div>";
-						formatted_html_email += "<span class='email-details-expander glyphicon glyphicon-chevron-up'></span>";
+						formatted_html_email += "<span class='email-details-expander chevron-down'>&#8964;</span>";
 						//formatted_html_email += "<div class='icons'><span class='glyphicon glyphicon-paperclip icon-white'><span class='glyphicon glyphicon-link icon-white'></span></div>";
 						//formatted_html_email += "<div class='icons'><img class='link-icon' src='./icons/link_icon_white.png'></div>";
 					formatted_html_email += "</div>";
@@ -391,26 +421,32 @@ function showParsingAndTime(result_meta, parse_terms) {
 	}
 }
 $(document).on('click', '.email-details-expander', function () {
-	if( $(this).hasClass("glyphicon-chevron-up")) {
-		$(this).removeClass("glyphicon-chevron-up");
-		$(this).addClass("glyphicon-chevron-down");
+	if( $(this).hasClass("chevron-down")) {
+		$(this).html("&#8963;");
+		$(this).addClass("chevron-up");
+		$(this).removeClass("chevron-down");
 		var email_html = $(this).parentsUntil(".email-result").parent();
 		email_html.find(".body").removeClass("hide");
 		email_html.find(".preview").addClass("hide");
 		email_html.find(".sender-email").removeClass("hide");
 		email_html.find(".subject").addClass("add-bottom-margin");
 		email_html.find(".to").removeClass("hide");
+		email_html.find(".links").removeClass("hide");
+		email_html.find(".attachments").removeClass("hide");
 		//email_html.find(".html-body").removeClass("hide");
 	}
-	else if ( $(this).hasClass("glyphicon-chevron-down")) {
-		$(this).removeClass("glyphicon-chevron-down");
-		$(this).addClass("glyphicon-chevron-up");
+	else if ( $(this).hasClass("chevron-up")) {
+		$(this).html("&#8964;");
+		$(this).addClass("chevron-down");
+		$(this).removeClass("chevron-up");
 		var email_html = $(this).parentsUntil(".email-result").parent();
 		email_html.find(".preview").removeClass("hide");
 		email_html.find(".body").addClass("hide");
 		email_html.find(".sender-email").addClass("hide");
 		email_html.find(".to").addClass("hide");
 		email_html.find(".subject").removeClass("add-bottom-margin");
+		email_html.find(".links").addClass("hide");
+		email_html.find(".attachments").addClass("hide");
 		//email_html.find(".html-body").addClass("hide");
 	}
 });

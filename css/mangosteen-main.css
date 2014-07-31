@@ -25,7 +25,7 @@ body,
 {
 	background: #fff;
 	color: #000;
-    font-family: Segoe UI, "Helvetica Neue";
+    font-family: 'Open Sans', "Helvetica Neue";
 	border: white;
 }
 
@@ -74,10 +74,10 @@ body {
 }
 .email-result
 {
-	border: 1px solid black;
+	border: none;
 	/*border-radius: 5px;*/
 	overflow: hidden;
-	background-color: rgba(0, 0, 0, 0.75);
+	background-color: rgba(0, 0, 0, 0.5);
 	padding: 10px;
 	margin: 15px 0 15px 0;
 }
@@ -95,14 +95,18 @@ body {
 }
 
 .time,
-.date,
+.date
+{
+	font-size: .6em;
+}
+
 .day,
 .sender-email,
 .preview,
 .body,
 .to
 {
-	font-size: .75em;
+	font-size: .65em;
 }
 
 .sender-email,
@@ -117,12 +121,13 @@ body {
 }
 .sender-name
 {
-	font-size: 1.5em;
-	line-height: 1.1em;
+	font-size: .9em;
+	line-height: .7em;
 }
 .subject
 {
-	font-size: .85em;
+	font-size: .65em;
+	font-weight: bold;
 }
 
 .time.phone,
@@ -150,7 +155,7 @@ body {
 {
 	font-size: 60%;
 	margin-right: 3px;
-	color: #7e7e7e;
+	color: whitesmoke;
 }
 .label.label-default.label-custom
 {
@@ -158,12 +163,14 @@ body {
 	font-weight: 500;
 	font-size: 60%;
 	background-color: rgba(0, 0, 0, 0.75);
-	color: #7e7e7e;
+	color: whitesmoke;
 }
 
 .email-details-expander
 {
 	margin-top: 12px;
+	font-size: 2em;
+	line-height: .2em;
 }
 
 .html-email-iframe {
@@ -180,4 +187,25 @@ body {
 }
 .add-bottom-margin {
 	margin-bottom: 15px;
+}
+
+.links,
+.attachments
+{
+	font-size: .65em;
+	margin-top: 15px;
+}
+.counts
+{
+	float: right;
+	font-size: .65em;
+}
+.link-count,
+.attachment-count
+{
+	margin-right: 10px;
+}
+em {
+	font-weight: bold;
+	color: whitesmoke;
 }
