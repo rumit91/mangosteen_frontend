@@ -61,6 +61,7 @@ body {
 	outline: 0;
 }
 
+#unsupported,
 .search-prefix,
 .search-query,
 #results-label {

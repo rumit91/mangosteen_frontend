@@ -25,77 +25,83 @@ var placeholders = [
 
 //var json_endpoint = "test.json";
 $(document).ready(function(){
-	$.get(json_terms_endpoint, function(data) {
-		if (data.terms) {
-			grammar_terms = data.terms;
-			console.log("Terms: " + grammar_terms );
+	if (window.chrome) {
+		$("#unsupported").hide();
+		$.get(json_terms_endpoint, function(data) {
+			if (data.terms) {
+				grammar_terms = data.terms;
+				console.log("Terms: " + grammar_terms );
+			} else {
+				console.log("No terms found: " + data);
+			}
+		});
+
+		checkIfPhone();
+
+		$search_box = $("#search-box");
+		
+		// Lookup if query string param was passed
+		var query;
+		if (query = qs(queryParamKey)) {
+			$search_box.val(query);
+			search(query);
 		} else {
-			console.log("No terms found: " + data);
+			setEndOfContenteditable($search_box[0]);
 		}
-	});
+		
+		$(document).keypress(function(e) {
+			if(e.which == 13) {
+				var query = getSearchQuery();
+				search(query);
+				e.preventDefault();
+			} else if (e.which == 32) {
+				var query = getSearchQuery();
+				search(query);
+			}
+		});
 
-	checkIfPhone();
+		// Keypress is called before input value is updated. Keyup is called after
+		// Doesn't work well with modified keystrokes (e.g. ctrl+a)
+		$search_box.keyup(function(e) {
+			//if (e.keyCode != 32) {
+				var query = getSearchQuery();
+				update_search_box(query, e.keyCode == 32);
+			//}
+		});
+		initAutocomplete();
 
-	$search_box = $("#search-box");
-	
-	// Lookup if query string param was passed
-	var query;
-	if (query = qs(queryParamKey)) {
-		$search_box.val(query);
-		search(query);
+		$("#searchButton").click(function() {
+			search(getSearchQuery());
+		});
+
+		// rotate placeholders
+		setInterval(function() {
+			if (++curr_placeholder_index == placeholders.length) {
+				curr_placeholder_index = 0;
+			}
+			//console.log("updating placeholder " + placeholders[curr_placeholder_index]);
+			//$search_box.fadeOut(500);
+			$search_box.attr("placeholder", placeholders[curr_placeholder_index]);
+			//$search_box.fadeIn(500);
+		}, 2500);
+		
+		// hack :(
+		setTimeout(function() {
+			$search_box.width($("#search-container").width() - 271);
+		}, 1);
+
+		$("#dym-container").hide();
+		var $suggestion = $("#dym-suggestion");
+		$suggestion.click(function() {
+			$("#dym-container").fadeOut(500);
+			var suggestion_text = $suggestion.text();
+			update_search_box(suggestion_text, false);
+			search(suggestion_text);
+		});
 	} else {
-		setEndOfContenteditable($search_box[0]);
+		$("#search-container").hide();
+		$("#dym-container").hide();
 	}
-	
-	$(document).keypress(function(e) {
-		if(e.which == 13) {
-			var query = getSearchQuery();
-			search(query);
-			e.preventDefault();
-		} else if (e.which == 32) {
-			var query = getSearchQuery();
-			search(query);
-		}
-	});
-
-	// Keypress is called before input value is updated. Keyup is called after
-	// Doesn't work well with modified keystrokes (e.g. ctrl+a)
-	$search_box.keyup(function(e) {
-		//if (e.keyCode != 32) {
-			var query = getSearchQuery();
-			update_search_box(query, e.keyCode == 32);
-		//}
-	});
-	initAutocomplete();
-
-	$("#searchButton").click(function() {
-		search(getSearchQuery());
-	});
-
-	// rotate placeholders
-	setInterval(function() {
-		if (++curr_placeholder_index == placeholders.length) {
-			curr_placeholder_index = 0;
-		}
-		//console.log("updating placeholder " + placeholders[curr_placeholder_index]);
-		//$search_box.fadeOut(500);
-		$search_box.attr("placeholder", placeholders[curr_placeholder_index]);
-		//$search_box.fadeIn(500);
-	}, 2500);
-	
-	// hack :(
-	setTimeout(function() {
-		$search_box.width($("#search-container").width() - 271);
-	}, 1);
-
-	$("#dym-container").hide();
-	var $suggestion = $("#dym-suggestion");
-	$suggestion.click(function() {
-		$("#dym-container").fadeOut(500);
-		var suggestion_text = $suggestion.text();
-		update_search_box(suggestion_text, false);
-		search(suggestion_text);
-	});
 });
 
 /* GRAMMAR HIGHLIGHTING / AUTOCOMPLETE */
