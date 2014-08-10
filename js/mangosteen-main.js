@@ -16,11 +16,12 @@ var current_nongrammar_term = "";
 
 var curr_placeholder_index = 0;
 var placeholders = [
-	"sent by Satya about One Week",
-	"with word attachments",
-	"with links to stubhub",
-	"sent yesterday from Evan",
-	"with pictures attached"
+	"Show me emails sent by Satya about One Week",
+	"Create a meeting with Julie sometime this week",
+	"Open Onenote",
+	"Show me docs created by Julie Larson-Green",
+	"Remind me to follow up with Jamie",
+	"Search the web for Seahawks tickets",
 ];
 
 //var json_endpoint = "test.json";
@@ -78,14 +79,12 @@ $(document).ready(function(){
 			curr_placeholder_index = 0;
 		}
 		//console.log("updating placeholder " + placeholders[curr_placeholder_index]);
-		//$search_box.fadeOut(500);
 		$search_box.attr("placeholder", placeholders[curr_placeholder_index]);
-		//$search_box.fadeIn(500);
-	}, 2500);
+	}, 2000);
 	
 	// hack :(
 	setTimeout(function() {
-		$search_box.width($("#search-container").width() - 271);
+		$search_box.width(1000);
 	}, 1);
 
 	$("#dym-container").hide();
