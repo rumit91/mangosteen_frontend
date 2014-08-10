@@ -25,7 +25,7 @@ body,
 {
 	background: #fff;
 	color: #000;
-    font-family: 'Open Sans', "Helvetica Neue";
+    font-family: 'Segoe UI', "Helvetica Neue";
 	border: white;
 }
 
@@ -39,7 +39,7 @@ body {
 }
 
 #search-container {
-	border-bottom: 1px solid white;
+	/*border-bottom: 1px solid white;*/
 	padding-bottom: 10px;
 	width: 100%;
 }
@@ -217,4 +217,56 @@ em {
 #dym-suggestion {
 	text-decoration: underline;
 	font-weight: bold;
+}
+
+* {
+    margin: 0;
+}
+html, body {
+    height: 100%;
+}
+
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin: 0 auto -250px; /* the bottom margin is the negative value of the footer's height */
+}
+
+.footer, .push {
+    height: 155px; /* .push must be the same height as .footer */
+}
+
+nav.bottom-navbar {
+    border: none;
+    background-color: black;
+    padding: 0;
+}
+
+.navbar-inverse .navbar-nav>li>a{
+    font-size: 10pt;
+}
+
+.navbar-brand {
+    font-size: 10pt;
+}
+
+.login{
+    background-color: #FF2500;
+height:80px;
+}
+
+footer{
+    background-color: #333;
+height: 200px;
+}
+
+.user-img{
+   margin:15px;
+}
+
+.user-img img{
+    max-height: 50px;
+    max-width: 50px;
+    border-radius:50%;
 }

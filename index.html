@@ -34,45 +34,13 @@
 </head>
 
 <body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
-                    <i class="fa fa-bars"></i>
-                </button>
-                <a class="navbar-brand page-scroll" href="#page-top">
-                    Mangosteen
-                </a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
-                <ul class="nav navbar-nav">
-                    <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
-                    <li class="hidden">
-                        <a href="#page-top"></a>
-                    </li>
-                    <li>
-                        <a class="page-scroll" href="#about">About</a>
-                    </li>
-                </ul>
-				<form class="navbar-form navbar-right">
-					<button class="btn btn-default">I want this for my inbox!</button>
-				</form>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
+    <div class="wrapper">
 
     <!-- Intro Header -->
     <header class="intro">
         <div class="intro-body">
-            <div class="container">
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-11">
 						<div id="search-container" class="input-group input-group-lg">
 							<span class="search-prefix">
                                 <span id="search-icon-container">
@@ -88,6 +56,11 @@
 							</span>-->
 						</div>
                     </div>
+                    <div class="col-xs-1 login">
+                        <div class="user-img">
+                            <img src="http://api.randomuser.me/portraits/med/women/23.jpg">
+                        </div>
+                    </div>
                 </div>
 				<div class="row">
                     <div class="col-md-12">
@@ -97,64 +70,42 @@
 						</div>
 					</div>
 				</div>
-            </div>
         </div>
     </header>
-
-    <!-- About Section -->
-    <section id="about" class="container content-section text-center">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h2>Mangosteen</h2>
-                <h4>Humanizing Your Inbox</h4>
-                <p>
-                   Mangosteen is a natural language query for all your emails
-                   <br>With the ability to search through <b>links, contacts, attachments</b> too
-                   <br>Just like web search we offer <b>'did you mean'</b> and <b>autosuggest</b> features
-                   <br>
-                   <br>
-                   <small>Use the search box above to filter through thousands of emails in our demo inbox</small>
-                </p>
-
-            </div>
-        </div>
-    </section>
-    
-    <!-- Example Section -->
-    <section id="example" class="content-section text-center">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h3>Search Made Simple</h3>
-                <h4> Magically Turning Your Sentence Into Code</h4>
-                <blockquote>"show me emails from Mark sent before June with links to facebook about jenny's birthday</blockquote>
-                <code class="codeline">Sender: 'Mark'</code>
-                <code class="codeline">Date: 'BEFORE 06/01/14'</code>
-                <code class="codeline">Link:'facebook'</code>
-                <code class="codeline">Query: 'jenny's birthday'</code>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Technical Section -->
-    <section id="technical" class="container content-section text-center">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2">
-                <h2>How it works</h2>
-                <h4>We Use Natural Language Processing to understand your query</h4>
-                <img class="diagram" src="./img/tree.png"><hr/>
-                <h4>Then Augment your Query</h4>
-                <img class="diagram" src="./img/augment.png"><hr/>
-                <h4>Using the augmented Query we make intelligent email searches</h4>
-                <img class="diagram" src="./img/elasticsearch.png">
-            </div>
-        </div>
-    </section>
+    <div class="push"></div>
+    </div>
     <!-- Footer -->
+    <div class="footer">
     <footer>
         <div class="container text-center">
-            <p>Mangosteen 2014</p>
+            <p>Start Something New</p>
         </div>
+       <nav class="navbar navbar-inverse bottom-navbar navbar-fixed-bottom" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">Microsoft 2014</a>
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="#">Products</a>
+                        </li>
+                        <li>
+                            <a href="#">Services</a>
+                        </li>
+                        <li>
+                            <a href="#">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- /.navbar-collapse -->
+            </div>
+            <!-- /.container -->
+        </nav>     
     </footer>
+    </div>
 
     <!-- jQuery Version 1.11.0 -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
