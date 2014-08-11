@@ -4,6 +4,8 @@
 var json_endpoint = "http://eql.herokuapp.com/parse/";
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
 var json_contacts_endpoint = "http://eql.herokuapp.com/contacts/";
+var snapmeetPeopleUrl = "https://snapmeeting.azurewebites.net/People/Search"
+var contextual_user = "saahm";
 var queryParamKey = "q";
 var grammar_terms;
 var $search_box;
@@ -443,6 +445,7 @@ function showParsingAndTime(result_meta, parse_terms) {
 		$("#parse-results").append(parse_tags_html);
 	}
 }
+
 $(document).on('click', '.email-details-expander', function () {
 	if( $(this).hasClass("chevron-down")) {
 		$(this).html("&#8963;");
@@ -473,3 +476,45 @@ $(document).on('click', '.email-details-expander', function () {
 		//email_html.find(".html-body").addClass("hide");
 	}
 });
+
+function launch_word(){
+  window.location.href = "https://office.live.com/start/Word.aspx?omkt=en%2DUS";
+}
+
+function launch_onenote(){
+  window.location.href = "http://www.onenote.com/notebooks";
+}
+
+function launch_powerpoint(){
+  window.location.href = "https://office.live.com/start/Powerpoint.aspx?omkt=en%2DUS";
+}
+
+function launch_excel(){
+  window.location.href = "https://office.live.com/start/Excel.aspx?omkt=en%2DUS";
+}
+
+function lookup_contact(user, query, onSuccess){
+  $.get(snapmeetPeopleUrl + "?user="+user+"&query="+query, onSuccess);
+}
+
+function who_is(alias){
+ var url = "https://msft-my.spoppe.com/PersonImmersive.aspx?accountname=i%3A0%23%2Ef%7Cmembership%7C" + alias + "@microsoft.com";
+ window.location.href = url;
+}
+
+function find_documents_by(email){
+  window.location.href = ("https://msft-my.spoppe.com/_layouts/15/me.aspx?p="+email)
+}
+
+function search_the_web(raw){
+  
+  query = raw;
+  if (raw.indexOf("for ") == 0){
+    query = raw.substring(4);
+  }
+  else if (raw.indexOf("about ") == 0){
+    query = raw.substring(6);
+  }
+  
+  window.location.href= ("http://bing.com/search?q=" + query)
+}
