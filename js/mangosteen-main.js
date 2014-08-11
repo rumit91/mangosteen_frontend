@@ -136,6 +136,48 @@ function initAutocomplete() {
           // prevent value inserted on focus
           return false;
         },
+        // positional autocomplete from http://stackoverflow.com/questions/14672433/jquery-ui-autocomplete-dropdown-below-each-word
+        open: function( event, ui ) {
+          var input = $( event.target ),
+              widget = input.autocomplete( "widget" ),
+              style = $.extend( input.css( [
+                  "font",
+                  "border-left",
+                  "padding-left"
+              ] ), {
+                  position: "absolute",
+                  visibility: "hidden",
+                  "padding-right": 0,
+                  "border-right": 0,
+                  "white-space": "pre"
+              } ),
+              div = $( "<div/>" ),
+              pos = {
+                  my: "left top",
+                  collision: "none"
+              },
+              offset = -7; // magic number to align the first letter
+                           // in the text field with the first letter
+                           // of suggestions
+                           // depends on how you style the autocomplete box
+
+          widget.css( "width", "" );
+
+          div
+              .text( input.text().replace( /\S*$/, "" ) )
+              .css( style )
+              .insertAfter( input );
+          offset = Math.min(
+              Math.max( offset + div.width(), 0 ),
+              input.width() - widget.width()
+          );
+          div.remove();
+
+          pos.at = "left+" + offset + " bottom";
+          input.autocomplete( "option", "position", pos );
+
+          widget.position( $.extend( { of: input }, pos ) );
+        },
         select: function( event, ui ) {
             console.log(this.textContent);
             	var selected = ui.item.value;

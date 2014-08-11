@@ -73,6 +73,11 @@ body {
 	font-weight: lighter;
 	margin-top: 20px;
 }
+
+.search-query > b {
+  font-weight: normal;
+}
+
 #email-container {
 	/*height: 300px;
 	overflow-y: scroll;*/
