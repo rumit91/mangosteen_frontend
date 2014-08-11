@@ -25,7 +25,7 @@ body,
 {
 	background: #fff;
 	color: #000;
-    font-family: 'Segoe UI', "Helvetica Neue";
+  font-family: 'Segoe UI', "Open Sans", "Helvetica Neue";
 	border: white;
 }
 
@@ -270,7 +270,7 @@ footer{
 footer p {
     color:white;
     font-size: 18pt;
-    font-family: 'Segoe UI', "Helvetica Neue";
+    font-family: 'Segoe UI', "Open Sans", "Helvetica Neue";
     font-weight: 100;
 }
 
@@ -305,3 +305,28 @@ a:hover.swTileLink{
     border: 1px solid #ccc;
 }
 
+/* CUSTOM AUTOCOMPLETE UI */
+.ui-widget-content {
+  border: 1px solid #C0C0C0;
+  color: black;
+  background: rgb(255, 255, 255);
+  padding:0;
+  border-radius:0;
+}
+
+.ui-menu .ui-menu-item a{
+  padding: 6px 15px;
+}
+
+.ui-corner-all .ui-state-focus{
+  background: #FF2500;
+  border:none;
+  border-radius:0;
+}
+
+.ui-widget-content a {
+  color: rgb(58, 58, 58);
+  font-family: 'Segoe UI', "Open Sans", "Helvetica Neue";
+  font-weight: light;
+	font-size: 19pt;
+}
