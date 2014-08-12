@@ -11,10 +11,20 @@ var grammar_terms;
 var $search_box;
 
 // autocomplete suggestion
-var autocomplete_grammar_terms = ["from", "to", "by"];
+var contact_ac_grammar_terms = ["from", "to", "by"];
 var last_grammar_term = "";
 var last_grammmar_index = -1;
+var last_nongrammar_index = -1;
 var current_nongrammar_term = "";
+var grammar_tokens = [];
+var was_grammar_ac = true;
+var root_action = null;
+
+var should_trigger_contacts_ac = false;
+var last_ac_term = "";
+var last_ac_index = -1;
+
+var selected_grammars = [];
 
 var curr_placeholder_index = 0;
 var placeholders = [
@@ -28,36 +38,31 @@ var placeholders = [
 
 //var json_endpoint = "test.json";
 $(document).ready(function(){
-	$.get(json_terms_endpoint, function(data) {
-		if (data.terms) {
-			grammar_terms = data.terms;
-			console.log("Terms: " + grammar_terms );
-		} else {
-			console.log("No terms found: " + data);
-		}
-	});
-
+	grammar_terms = get_properties(tree);
 	checkIfPhone();
 
 	$search_box = $("#search-box");
 	
-	// Lookup if query string param was passed
-	var query;
-	if (query = qs(queryParamKey)) {
-		$search_box.val(query);
-		search(query);
-	} else {
-		setEndOfContenteditable($search_box[0]);
-	}
+	// // Lookup if query string param was passed
+	// var query;
+	// if (query = qs(queryParamKey)) {
+	// 	$search_box.val(query);
+	// 	search(query);
+	// } else {
+	// 	setEndOfContenteditable($search_box[0]);
+	// }
 	
 	$(document).keypress(function(e) {
 		if(e.which == 13) {
-			var query = getSearchQuery();
-			search(query);
+			if (root_action && root_action.execute) {
+				root_action.execute.call(this);
+			}
+
 			e.preventDefault();
 		} else if (e.which == 32) {
-			var query = getSearchQuery();
-			search(query);
+			// TODO: launch action on space for certain commands
+			// var query = getSearchQuery();
+			// search(query);
 		}
 	});
 
@@ -97,6 +102,8 @@ $(document).ready(function(){
 		update_search_box(suggestion_text, false);
 		search(suggestion_text);
 	});
+
+	setEndOfContenteditable($search_box[0]);
 });
 
 /* GRAMMAR HIGHLIGHTING / AUTOCOMPLETE */
@@ -115,21 +122,27 @@ function initAutocomplete() {
 		}
       })
       .autocomplete({
-        minLength: 2,
+        minLength: 0,
         source: function( request, response ) {
-            //console.log("request term: "  + request.term);
-        	if (last_grammar_term && current_nongrammar_term && autocomplete_grammar_terms.indexOf(last_grammar_term.toLowerCase()) >= 0) {
-        		
-        		$.get(json_contacts_endpoint + current_nongrammar_term, function(data) {
-        			if (data.contacts) {
-        				//console.log("autocomplete: " + data.contacts);
-        				response(data.contacts);
-        			} else {
-        				response([]);
-        			}
-        		});
+        	if (should_trigger_contacts_ac) {
+        		if (last_ac_term.length > 1) {
+	        		$.get(json_contacts_endpoint + last_ac_term, function(data) {
+	        			if (data.contacts) {
+	        				response(data.contacts);
+	        			} else {
+	        				response([]);
+	        			}
+	        		});
+	        	} else {
+	        		response([]);
+	        	}
+
+        		was_grammar_ac = false;
         	} else {
-        		response([]);
+        		was_grammar_ac = true;
+        		response(grammar_terms.filter(function (term) {
+        			return selected_grammars.indexOf(term) < 0;
+        		}));
         	}
         },
         focus: function() {
@@ -179,25 +192,88 @@ function initAutocomplete() {
           widget.position( $.extend( { of: input }, pos ) );
         },
         select: function( event, ui ) {
-            console.log(this.textContent);
-            	var selected = ui.item.value;
-            	var query = $search_box.html();
-            	var current_nongrammar_index = query.lastIndexOf(current_nongrammar_term);
-            	if (current_nongrammar_index >= 0) {
-            		query = query.substring(0, current_nongrammar_index) + selected + query.substring(current_nongrammar_index + current_nongrammar_term.length);
-            		$search_box.html(query);
-            		reset_autocomplete();
-            	}
+			var selected = ui.item.value;
+           	var query = $search_box.text();
 
-	          	return false;
+        	var ac_letter_index = query.lastIndexOf(last_ac_term);
+        	if (ac_letter_index >= 0) {
+	        	query = query.substring(0, ac_letter_index) + selected + query.substring(ac_letter_index + last_ac_term.length);
+				$search_box.html(query);
+	            update_ac(selected);
+	        	reset_autocomplete();
+	        } else {
+	        	console.log("Unexpected autocomplete error. AC term not found in query");
+	        }
+          	
+          	return false;
         }
       });
+}
+
+function update_ac(term) {
+	if (was_grammar_ac) {
+		if (root_action == null) {
+    		root_action = tree[term];
+    		if (!root_action) {
+    			console.log("Unsupported command. Please try something different!");
+    		}
+    	} else {
+    		// Contacts autocomplete
+    		var option = root_action.options[term];
+    		if (option) {
+    			// This doesn't include about case, do later
+    			if (option.autocomplete) {
+					should_trigger_contacts_ac = true;
+				} else if (option.action) {
+					// The term was the option itself, we have no term to attach
+					option.action.call(this);
+				}
+			} else {
+				// This must have been a non-grammar term
+				option = root_action.options[last_grammar_term];
+				if (option && option.action) {
+					option.action.call(this, term);
+					console.log("Succcessfully launched action");
+				}
+			}
+    	}
+
+		last_grammar_term = "";
+		last_grammmar_index = -1;
+    	
+
+    	selected_grammars.push(term);
+    	// Replace with next set of possible grammars
+    	grammar_terms = get_properties(root_action.options);
+    } else {
+    	// Just AC'ed a contact, max 1 contact, so don't trigger contacts again
+    	should_trigger_contacts_ac = false;
+    }
+}
+
+function log_parse_state() {
+	console.log("Grammar: " + last_grammar_term + "," + last_grammmar_index);
+	console.log("Nongrammar: " + current_nongrammar_term + "," + current_nongrammar_index);
+	console.log("AC: " + last_ac_term + "," + last_ac_index);		
 }
 
 function reset_autocomplete() {
 	last_grammar_term = "";
 	last_grammmar_index = -1;
 	current_nongrammar_term = "";
+	current_nongrammar_index = -1;
+	last_ac_term = "";
+	last_ac_index = -1;
+}
+
+function get_properties(obj) {
+	var properties = [];
+	for (var prop in obj) {
+		$.merge(grammar_tokens, prop.split(" "));
+		properties.push(prop);
+	}
+
+	return properties;
 }
 
 // Grammar highlighting
@@ -212,24 +288,25 @@ function update_search_box(query, lastLetterIsSpace) {
 		});
 
 		var new_query_terms = [];
-
 		query_terms.forEach(function(query_term, index) {
-			if (grammar_terms && grammar_terms.indexOf(query_term) >= 0) {
-				last_grammar_term = query_term;
-				last_grammmar_index = index;
-				current_nongrammar_term = "";
-			} else {
-				// Save current non-grammar term
-				if (index - 1 == last_grammmar_index) {
-					current_nongrammar_term = query_term
-				} else {
-					current_nongrammar_term += " " + query_term;
-				}
+			last_ac_term += (last_ac_term ? " " : "") + query_term;
+			if (last_ac_index < 0) {
+				last_ac_index = index;
+			}
 
+			if (!grammar_tokens || grammar_tokens.indexOf(query_term) < 0) {
+				// Bold unrecognized term
 				query_term = '<b>' + query_term + '</b>';
 			}
 
-			new_query_terms.push(query_term);	
+			if (selected_grammars.indexOf(last_ac_term) >= 0) {
+				last_grammar_term = last_ac_term;
+				last_grammmar_index = last_ac_index;
+				last_ac_term = "";
+				last_ac_index = -1;
+			}
+
+			new_query_terms.push(query_term);
 		});
 
 		 query_html = new_query_terms.join(" ");
