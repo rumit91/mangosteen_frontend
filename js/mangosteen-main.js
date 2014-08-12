@@ -39,7 +39,10 @@ var placeholders = [
 
 //var json_endpoint = "test.json";
 $(document).ready(function(){
-	grammar_terms = get_properties(tree);
+	if (!window.chrome){
+    $('body').html("<h1>Sorry This Prototype only works in chrome</h1>");
+  }
+  grammar_terms = get_properties(tree);
 	checkIfPhone();
 
 	$search_box = $("#search-box");
