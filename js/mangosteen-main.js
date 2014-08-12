@@ -113,15 +113,17 @@ function initAutocomplete() {
 	$search_box
       // don't navigate away from the field on tab when selecting an item
       .bind( "keyup", function( event ) {
-        if ( event.keyCode === $.ui.keyCode.TAB &&
-            $( this ).autocomplete( "instance" ).menu.active ) {
-          event.preventDefault();
-        }
-		else if (event.keyCode === 13) 
+		if (event.keyCode === 13) 
 		{
 			this.blur();
 			setEndOfContenteditable(this);
 		}
+      })
+      .bind("keydown", function (event) {
+      	if ( event.keyCode === $.ui.keyCode.TAB ) {
+      		//  $( this ).autocomplete( "instance" ).menu.active
+         	event.preventDefault();
+        }
       })
       .autocomplete({
         minLength: 0,
@@ -156,6 +158,7 @@ function initAutocomplete() {
           return false;
         },
         delay: 0,
+        autoFocus: true,
         // positional autocomplete from http://stackoverflow.com/questions/14672433/jquery-ui-autocomplete-dropdown-below-each-word
         open: function( event, ui ) {
           var input = $( event.target ),
@@ -377,6 +380,8 @@ function update_search_box(query, lastLetterIsSpace) {
 	if (grammar_terms.indexOf(last_ac_term.toLowerCase()) >= 0) {
 		was_grammar_ac = true;
 		update_grammar_ac(last_ac_term);
+
+		$search_box.autocomplete("close");
 		reset_autocomplete();
 	}
 
