@@ -29,11 +29,12 @@ var curr_placeholder_index = 0;
 var placeholders = [
 	"Show me emails from Satya about One Week",
 	"Create a meeting with Julie sometime this week",
-	"Launch OneNote",
-	"Who is Bill Gates",
+	"Launch Powerpoint",
+	"Who is Sarthak Shah",
 	"Show me documents created by Julie Larson-Green",
 	"Search the web for Seahawks tickets",
 	"Create a new slideshow",
+	"Search sharepoint for Substrate",
 ];
 
 //var json_endpoint = "test.json";
@@ -329,6 +330,7 @@ function on_query_emptied() {
 	autocomplete_func = null;
 
 	grammar_terms = get_properties(tree);
+  glow_off();
 }
 
 function get_properties(obj) {
