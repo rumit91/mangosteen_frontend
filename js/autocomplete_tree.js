@@ -56,8 +56,8 @@ function search_the_web(raw){
 
 function mangosteen_people_search(prefix, onSuccess){
   $.get(mangosteen_contacts_endpoint + prefix, function(data) {
-    if (data) {
-      onSuccess(data);
+    if (data.contacts) {
+      onSuccess(data.contacts);
     }
     else{
       onSuccess([]);

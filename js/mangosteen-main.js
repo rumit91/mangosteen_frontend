@@ -4,7 +4,6 @@
 var json_endpoint = "http://eql.herokuapp.com/parse/";
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
 var json_contacts_endpoint = "http://eql.herokuapp.com/contacts/";
-var snapmeetPeopleUrl = "https://snapmeeting.azurewebites.net/People/Search"
 var contextual_user = "saahm";
 var queryParamKey = "q";
 var grammar_terms;
@@ -21,6 +20,7 @@ var was_grammar_ac = true;
 var root_action = null;
 
 var should_trigger_contacts_ac = false;
+var autocomplete_func = null
 var last_ac_term = "";
 var last_ac_index = -1;
 
@@ -125,14 +125,8 @@ function initAutocomplete() {
         minLength: 0,
         source: function( request, response ) {
         	if (should_trigger_contacts_ac) {
-        		if (last_ac_term.length > 1) {
-	        		$.get(json_contacts_endpoint + last_ac_term, function(data) {
-	        			if (data.contacts) {
-	        				response(data.contacts);
-	        			} else {
-	        				response([]);
-	        			}
-	        		});
+        		if (last_ac_term.length > 1 && autocomplete_func) {
+              autocomplete_func(last_ac_term, function(results) { response(results); });
 	        	} else {
 	        		response([]);
 	        	}
@@ -224,6 +218,7 @@ function update_ac(term) {
     			// This doesn't include about case, do later
     			if (option.autocomplete) {
 					should_trigger_contacts_ac = true;
+          autocomplete_func = option.autocomplete
 				} else if (option.action) {
 					// The term was the option itself, we have no term to attach
 					option.action.call(this);
