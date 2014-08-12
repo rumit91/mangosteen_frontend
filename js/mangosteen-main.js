@@ -126,7 +126,7 @@ function initAutocomplete() {
         source: function( request, response ) {
         	if (should_trigger_contacts_ac) {
         		if (last_ac_term.length > 1 && autocomplete_func) {
-              autocomplete_func(last_ac_term, function(results) { response(results); });
+              		autocomplete_func(last_ac_term, function(results) { response(results); });
 	        	} else {
 	        		response([]);
 	        	}
@@ -212,27 +212,28 @@ function initAutocomplete() {
 
 function update_grammar_ac(term) {
 	if (root_action == null) {
-    		root_action = tree[term];
-    		if (!root_action) {
-    			console.log("Unsupported command. Please try something different!");
-    		} else if (root_action.autocomplete) {
-				// Some actions trigger autocomplete from root, e.g. "who is"
-    			should_trigger_contacts_ac = true;
-    		}
-    	} else {
-    		// Contacts autocomplete
-    		var option = root_action.options[term];
-    		if (option) {
-    			// This was a grammar term
-    			if (option.autocomplete) {
-					should_trigger_contacts_ac = true;
-          autocomplete_func = option.autocomplete
-				} else if (option.action) {
-					// The term was the option itself, we have no term to attach
-					option.action.call(this);
-				}
+		root_action = tree[term];
+		if (!root_action) {
+			console.log("Unsupported command. Please try something different!");
+		} else if (root_action.autocomplete) {
+			// Some actions trigger autocomplete from root, e.g. "who is"
+			should_trigger_contacts_ac = true;
+  			autocomplete_func = root_action.autocomplete;
+		}
+	} else {
+		// Contacts autocomplete
+		var option = root_action.options[term];
+		if (option) {
+			// This was a grammar term
+			if (option.autocomplete) {
+				should_trigger_contacts_ac = true;
+      			autocomplete_func = option.autocomplete;
+			} else if (option.action) {
+				// The term was the option itself, we have no term to attach
+				option.action.call(this);
 			}
-    	}
+		}
+	}
 
 	last_grammar_term = "";
 	last_grammmar_index = -1;
