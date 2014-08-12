@@ -17,6 +17,7 @@ var grammar_tokens = [];
 var was_grammar_ac = true;
 var root_action = null;
 
+var should_trigger_nongrammar_ac = false;
 var should_trigger_contacts_ac = false;
 var autocomplete_func = null
 var last_ac_term = "";
@@ -123,13 +124,12 @@ function initAutocomplete() {
       .autocomplete({
         minLength: 0,
         source: function( request, response ) {
-        	if (should_trigger_contacts_ac) {
-        		if (last_ac_term.length > 1 && autocomplete_func) {
-              		autocomplete_func(last_ac_term, function(results) { response(results); });
-	        	} else {
-	        		response([]);
-	        	}
-
+        	if (((should_trigger_contacts_ac && last_ac_term.length > 1) || should_trigger_nongrammar_ac) && autocomplete_func) {
+          		autocomplete_func(last_ac_term, function(results) { response(results); });
+        		was_grammar_ac = false;
+        	} else if (should_trigger_nongrammar_ac || should_trigger_contacts_ac) {
+        		// Min length not met or no ac fn available
+        		response([]);
         		was_grammar_ac = false;
         	} else {
         		was_grammar_ac = true;
@@ -142,6 +142,7 @@ function initAutocomplete() {
           // prevent value inserted on focus
           return false;
         },
+        delay: 0,
         // positional autocomplete from http://stackoverflow.com/questions/14672433/jquery-ui-autocomplete-dropdown-below-each-word
         open: function( event, ui ) {
           var input = $( event.target ),
@@ -227,6 +228,11 @@ function update_grammar_ac(term) {
 			if (option.autocomplete) {
 				should_trigger_contacts_ac = true;
       			autocomplete_func = option.autocomplete;
+			} else if (option.terms) {
+				should_trigger_nongrammar_ac = true;
+				autocomplete_func = function (prefix, onSuccess) {
+					onSuccess(option.terms ? option.terms : []);
+				};
 			} else if (option.action) {
 				// The term was the option itself, we have no term to attach
 				option.action.call(this);
