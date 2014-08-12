@@ -207,7 +207,7 @@ function initAutocomplete() {
 
         	var ac_letter_index = query.lastIndexOf(last_ac_term);
         	if (ac_letter_index >= 0) {
-	        	query = query.substring(0, ac_letter_index) + selected + query.substring(ac_letter_index + last_ac_term.length);
+	        	query = query.substring(0, ac_letter_index) + selected + " " + query.substring(ac_letter_index + last_ac_term.length);
 				$search_box.html(query);
 
 				if (!was_grammar_ac) {
