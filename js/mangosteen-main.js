@@ -13,8 +13,6 @@ var $search_box;
 var contact_ac_grammar_terms = ["from", "to", "by"];
 var last_grammar_term = "";
 var last_grammmar_index = -1;
-var last_nongrammar_index = -1;
-var current_nongrammar_term = "";
 var grammar_tokens = [];
 var was_grammar_ac = true;
 var root_action = null;
@@ -25,6 +23,7 @@ var last_ac_term = "";
 var last_ac_index = -1;
 
 var selected_grammars = [];
+var selected_nongrammars = [];
 
 var curr_placeholder_index = 0;
 var placeholders = [
@@ -240,6 +239,7 @@ function update_grammar_ac(term) {
 	
 
 	selected_grammars.push(term);
+	        	
 	// Replace with next set of possible grammars
 	grammar_terms = get_properties(root_action.options);
 }
@@ -247,6 +247,8 @@ function update_grammar_ac(term) {
 function update_nongrammar_ac(term) {
 	// Just AC'ed a contact, max 1 contact, so don't trigger contacts again
 	should_trigger_contacts_ac = false;
+	selected_nongrammars.push(term);
+
 	// This must have been a non-grammar term
 	if (root_action) {
 		if (root_action.options) {
@@ -259,20 +261,20 @@ function update_nongrammar_ac(term) {
 			// Optionless command
 			root_action.action.call(this, term);
 		}
+	        	
+		// Replace with next set of possible grammars
+		grammar_terms = get_properties(root_action.options);
 	}
 }
 
 function log_parse_state() {
 	console.log("Grammar: " + last_grammar_term + "," + last_grammmar_index);
-	console.log("Nongrammar: " + current_nongrammar_term + "," + current_nongrammar_index);
 	console.log("AC: " + last_ac_term + "," + last_ac_index);		
 }
 
 function reset_autocomplete() {
 	last_grammar_term = "";
 	last_grammmar_index = -1;
-	current_nongrammar_term = "";
-	current_nongrammar_index = -1;
 	last_ac_term = "";
 	last_ac_index = -1;
 }
@@ -313,6 +315,9 @@ function update_search_box(query, lastLetterIsSpace) {
 			if (selected_grammars.indexOf(last_ac_term) >= 0) {
 				last_grammar_term = last_ac_term;
 				last_grammmar_index = last_ac_index;
+				last_ac_term = "";
+				last_ac_index = -1;
+			} else if (selected_nongrammars.indexOf(last_ac_term) >= 0) {
 				last_ac_term = "";
 				last_ac_index = -1;
 			}
