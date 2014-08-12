@@ -78,16 +78,15 @@ body {
   font-weight: normal;
 }
 
-#email-container {
-	/*height: 300px;
-	overflow-y: scroll;*/
+#serp-container {
+	
 }
 .email-result
 {
 	border: none;
 	/*border-radius: 5px;*/
 	overflow: hidden;
-	background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(228,228,228,1);
 	padding: 10px;
 	margin: 15px 0 15px 0;
 }
@@ -124,7 +123,7 @@ body {
 .preview,
 .to
 {
-	color: #afafaf;
+	color: #777676;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	overflow: hidden;
@@ -165,14 +164,15 @@ body {
 {
 	font-size: 60%;
 	margin-right: 3px;
-	color: whitesmoke;
+	color: #444;
 }
+
 .label.label-default.label-custom
 {
 	margin-right: 3px;
 	font-weight: 500;
 	font-size: 60%;
-	background-color: rgba(0, 0, 0, 0.75);
+	background-color: rgba(0, 0, 0, 0.3);
 	color: whitesmoke;
 }
 

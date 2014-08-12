@@ -55,7 +55,7 @@ $(document).ready(function(){
 	$(document).keypress(function(e) {
 		if(e.which == 13) {
 			if (root_action && root_action.execute) {
-				root_action.execute.call(this);
+				root_action.execute.call(this, getSearchQuery());
 			}
 
 			e.preventDefault();
@@ -411,14 +411,14 @@ function getSearchQuery() {
 
 function search(search_query) {
 	console.log("Searching for " + search_query);
-	$("#email-container").empty();
+	$("#serp-container").empty();
 	$.getJSON( json_endpoint + search_query, function( data ) {
 		//var server_response = $.parseJSON( data );
 		var server_response = data;
 		if(server_response.result.parse_success) {	
 			showParsingAndTime(server_response.result, server_response.parse_terms);
 			//var formatted_html_email_set = "";
-			for(var array_id in server_response.emails)
+			for(var array_id in server_response.emails.slice(0,3))
 			{
 				var email = server_response.emails[array_id];
 				var formatted_html_email = '<div class="email-result">';
@@ -483,7 +483,7 @@ function search(search_query) {
 					formatted_html_email += "</div>";
 				}
 				formatted_html_email += "</div>";
-				$("#email-container").append(formatted_html_email);
+				$("#serp-container").append(formatted_html_email);
 				
 				//console.log(email.html_body);
 				//var email_iframe = $("#email-container").find(".email-result").last().find(".html-email-iframe");
@@ -494,7 +494,7 @@ function search(search_query) {
 			//$("#email-container").html(formatted_html_email_set);
 			//$("body").append(formatted_html_email_set);
 
-			update_dym(server_response.suggestions);
+      // update_dym(server_response.suggestions);
 		}
 	});
 }
@@ -621,45 +621,3 @@ $(document).on('click', '.email-details-expander', function () {
 		//email_html.find(".html-body").addClass("hide");
 	}
 });
-
-function launch_word(){
-  window.location.href = "https://office.live.com/start/Word.aspx?omkt=en%2DUS";
-}
-
-function launch_onenote(){
-  window.location.href = "http://www.onenote.com/notebooks";
-}
-
-function launch_powerpoint(){
-  window.location.href = "https://office.live.com/start/Powerpoint.aspx?omkt=en%2DUS";
-}
-
-function launch_excel(){
-  window.location.href = "https://office.live.com/start/Excel.aspx?omkt=en%2DUS";
-}
-
-function lookup_contact(user, query, onSuccess){
-  $.get(snapmeetPeopleUrl + "?user="+user+"&query="+query, onSuccess);
-}
-
-function who_is(alias){
- var url = "https://msft-my.spoppe.com/PersonImmersive.aspx?accountname=i%3A0%23%2Ef%7Cmembership%7C" + alias + "@microsoft.com";
- window.location.href = url;
-}
-
-function find_documents_by(email){
-  window.location.href = ("https://msft-my.spoppe.com/_layouts/15/me.aspx?p="+email)
-}
-
-function search_the_web(raw){
-  
-  query = raw;
-  if (raw.indexOf("for ") == 0){
-    query = raw.substring(4);
-  }
-  else if (raw.indexOf("about ") == 0){
-    query = raw.substring(6);
-  }
-  
-  window.location.href= ("http://bing.com/search?q=" + query)
-}

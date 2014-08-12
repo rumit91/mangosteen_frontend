@@ -41,17 +41,24 @@ function find_documents_by(email){
   window.location.href = ("https://msft-my.spoppe.com/_layouts/15/me.aspx?p="+email)
 }
 
-function search_the_web(raw){
+function pipe_to_search_engine(raw, source){
   
   query = raw;
-  if (raw.indexOf("for ") == 0){
-    query = raw.substring(4);
-  }
-  else if (raw.indexOf("about ") == 0){
-    query = raw.substring(6);
+  
+  if (raw.indexOf("search the web for") == 0){
+    query = raw.substring("search the web for".length)
   }
   
-  window.location.href= ("http://bing.com/search?q=" + query)
+  if (raw.indexOf("search sharepoint for") == 0){
+    query = raw.substring("search sharepoint for".length)
+  }
+  
+  if (source === "bing"){
+    window.location.href= ("http://bing.com/search?q=" + query);
+  }
+  else if (source === "sharepoint"){
+    window.location.href= ("https://msft.spoppe.com/search/Pages/results.aspx?k=" + query);
+  }
 }
 
 function mangosteen_people_search(prefix, onSuccess){
@@ -82,38 +89,12 @@ function fast_search(query){
 
 function show_me_emails(search_query) {
   console.log("Raw Query " + search_query);
-  search_query = search_query.lower();
-  if (search_query.indexOf("show me emails")){
+  search_query = search_query.toLowerCase();
+  if (search_query.indexOf("show me emails") == 0){
     search_query = search_query.substring("show me emails".length);
   }
-	
-  console.log("Searching for " + search_query);
-	
-  $("#email-container").empty();
-	$.getJSON( json_endpoint + search_query, function( data ) {
-		//var server_response = $.parseJSON( data );
-		var server_response = data;
-		if(server_response.result.parse_success) {	
-			showParsingAndTime(server_response.result, server_response.parse_terms);
-			//var formatted_html_email_set = "";
-			for(var array_id in server_response.emails)
-			{
-				var email = server_response.emails[array_id];
-				var formatted_html_email = '<div class="email-result">';
-				var date_time = new Date(email.sent_time);
-			
-        formatted_html_email += "<div class='email-result-left'>";
-						formatted_html_email += "<div class='sender phone'><span class='sender-name phone'>" + email.from.name + "</span></div>";
-						formatted_html_email += "<div class='subject phone'>" + shortenText(email.subject, true) + "</div>";
-						formatted_html_email += "<div class='preview phone'>" + shortenText(email.body_preview, true) + "</div>";
-					formatted_html_email += "</div>";
-						formatted_html_email += "<div class='email-result-right'>";
-						formatted_html_email += "<div class='date phone'>" + getDateDisplayString(date_time) + "</div>";
-						formatted_html_email += "<div class='time phone'>" + getTimeDisplayString(date_time) + "</div>";
-					formatted_html_email += "</div>";
-      }
-    }
-  });
+
+  search(search_query);
 }
 
 function reset_tree(){
@@ -123,7 +104,7 @@ function reset_tree(){
 
 tree = {
   "show me emails":{ 
-    "execute" : function( text ){ search(text) } ,
+    "execute" : function( text ){ show_me_emails(text) } ,
     "options":{ 
       "to" : {
         "autocomplete": mangosteen_people_search, 
@@ -134,8 +115,8 @@ tree = {
         "action" : null
       },
       "about" : { "terms": ["office now", "digital life & digital work"], "action" : null },
-      "with links to" : { "terms" : ["yammer.com", "facebook.com"], "action":null},
-      "sent before " : {"terms" : ["yesterday", "monday", "june"], "action": null},
+      "with links to" : { "terms" : ["yammer.com", "bing.com", "xbox.com", "twitter.com", "flickr.com", "ifttt.com", "wikipedia.org", "facebook.com"], "action":null},
+      "sent before " : {"terms" : ["yesterday", "monday", "june", "august"], "action": null},
       "sent after" : {"terms" : ["yesterday", "monday", "july"], "action" : null},
     }
   },
@@ -170,18 +151,18 @@ tree = {
       },
       "about" : { 
         "action" : function(subject){ params.time = subject; },
-        "terms": ["office now", "one clip", "next", "loud mango", "revolve", "hiking", "bing ux", "DLW"] 
+        "terms": ["office now", "one clip", "next", "loud mango", "revolve", "hiking", "bing ux", "DLW", "photography", "nikon", "hiking", "overclocked"] 
       }
     }
   },
-  "find me documents":{ 
+  "show me documents":{ 
     "execute": function(){ 
       params = params || {};
-      if (params.person && !params.about){
+      if (params.email && !params.about){
         find_documents_by(params.email);
       }
       if (params.about){
-        fast_search(params.about + " " + (params.person || "" ) )
+        fast_search(params.about + " " + (params.email || "" ) )
       }
     },
     "options":{
@@ -213,7 +194,10 @@ tree = {
       }); 
     }
   },
-  "search the web":{
-    "execute": function(text){ search_the_web(text); }
+  "search sharepoint for": {
+    "execute" : function(text){ pipe_to_search_engine(text, "sharepoint");}
+  },
+  "search the web for":{
+    "execute": function(text){ pipe_to_search_engine(text, "bing"); }
   }
 }
