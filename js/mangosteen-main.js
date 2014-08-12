@@ -210,25 +210,21 @@ function update_ac(term) {
     		root_action = tree[term];
     		if (!root_action) {
     			console.log("Unsupported command. Please try something different!");
+    		} else if (root_action.autocomplete) {
+				// Some actions trigger autocomplete from root, e.g. "who is"
+    			should_trigger_contacts_ac = true;
     		}
     	} else {
     		// Contacts autocomplete
     		var option = root_action.options[term];
     		if (option) {
-    			// This doesn't include about case, do later
+    			// This was a grammar term
     			if (option.autocomplete) {
 					should_trigger_contacts_ac = true;
           autocomplete_func = option.autocomplete
 				} else if (option.action) {
 					// The term was the option itself, we have no term to attach
 					option.action.call(this);
-				}
-			} else {
-				// This must have been a non-grammar term
-				option = root_action.options[last_grammar_term];
-				if (option && option.action) {
-					option.action.call(this, term);
-					console.log("Succcessfully launched action");
 				}
 			}
     	}
@@ -243,6 +239,19 @@ function update_ac(term) {
     } else {
     	// Just AC'ed a contact, max 1 contact, so don't trigger contacts again
     	should_trigger_contacts_ac = false;
+    	// This must have been a non-grammar term
+    	if (root_action) {
+    		if (root_action.options) {
+				var option = root_action.options[last_grammar_term];
+				if (option && option.action) {
+					option.action.call(this, term);
+					console.log("Succcessfully launched action");
+				}
+			} else if (root_action.execute) {
+				// Optionless command
+				root_action.execute.call(this, term);
+			}
+		}
     }
 }
 
