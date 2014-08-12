@@ -20,6 +20,7 @@ var was_grammar_ac = true;
 var root_action = null;
 
 var should_trigger_contacts_ac = false;
+var autocomplete_func = null
 var last_ac_term = "";
 var last_ac_index = -1;
 
@@ -124,14 +125,8 @@ function initAutocomplete() {
         minLength: 0,
         source: function( request, response ) {
         	if (should_trigger_contacts_ac) {
-        		if (last_ac_term.length > 1) {
-	        		$.get(json_contacts_endpoint + last_ac_term, function(data) {
-	        			if (data.contacts) {
-	        				response(data.contacts);
-	        			} else {
-	        				response([]);
-	        			}
-	        		});
+        		if (last_ac_term.length > 1 && autocomplete_func) {
+              autocomplete_func(last_ac_term, function(results) { response(results); });
 	        	} else {
 	        		response([]);
 	        	}
@@ -231,6 +226,7 @@ function update_grammar_ac(term) {
     			// This was a grammar term
     			if (option.autocomplete) {
 					should_trigger_contacts_ac = true;
+          autocomplete_func = option.autocomplete
 				} else if (option.action) {
 					// The term was the option itself, we have no term to attach
 					option.action.call(this);
