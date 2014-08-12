@@ -27,12 +27,13 @@ var autocomplete_func = null;
 // Placeholder
 var curr_placeholder_index = 0;
 var placeholders = [
-	"Show me emails sent by Satya about One Week",
+	"Show me emails from Satya about One Week",
 	"Create a meeting with Julie sometime this week",
-	"Open Onenote",
-	"Show me docs created by Julie Larson-Green",
-	"Remind me to follow up with Jamie",
+	"Launch OneNote",
+	"Who is Bill Gates",
+	"Show me documents created by Julie Larson-Green",
 	"Search the web for Seahawks tickets",
+	"Create a new slideshow",
 ];
 
 //var json_endpoint = "test.json";
