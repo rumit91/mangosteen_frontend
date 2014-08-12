@@ -257,7 +257,8 @@ tree = {
         }
       },
       "about" : {
-        "action" : function(about){ params.about = about; }
+        "action" : function(about){ params.about = about; },
+        "terms": ["substrate", "one clip", "office now", "ASG", "revolve", "hiking", "bing ux", "DLW", "photography", "nikon", "hiking", "overclocked"] 
       }
     }
   },

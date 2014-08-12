@@ -249,6 +249,7 @@ function update_grammar_ac(term) {
 			} else if (option.action) {
 				// The term was the option itself, we have no term to attach
 				option.action.call(this);
+        glow_on();
 			}
 		}
 	}
@@ -283,7 +284,16 @@ function update_nongrammar_ac(term) {
 	        	
 		// Replace with next set of possible grammars
 		grammar_terms = get_properties(root_action.options);
+    glow_on();
 	}
+}
+
+function glow_on(){
+  $('#goicon').addClass('radioactive')
+}
+
+function glow_off(){
+  $('#goicon').removeClass('radioactive')
 }
 
 function log_parse_state() {
@@ -379,6 +389,10 @@ function update_search_box(query, lastLetterIsSpace) {
 		update_grammar_ac(last_ac_term);
 		reset_autocomplete();
 	}
+
+  if (last_ac_term){
+    glow_off();
+  }
 
 	$search_box.html(query_html);
 	setEndOfContenteditable($search_box[0]);

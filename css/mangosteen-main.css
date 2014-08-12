@@ -363,8 +363,15 @@ p.small {
   padding-left:40px;
 }
 
+@-webkit-keyframes redPulse {
+  from { color: #bc330d;/* -webkit-box-shadow: 0 0 9px #333;*/ }
+  50% { color:  #e33100;/* -webkit-box-shadow: 0 0 18px #e33100;*/ }
+  to { color:  #bc330d; /*-webkit-box-shadow: 0 0 9px #333;*/ }
+}
+
 .radioactive {
-  border-bottom: 1px solid  #FF2500; 
-  -webkit-box-shadow: 0 0 18px #FF2500;
+  -webkit-animation-name: redPulse;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
 }
 
