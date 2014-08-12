@@ -126,11 +126,11 @@ tree = {
     "execute" : function( text ){ search(text) } ,
     "options":{ 
       "to" : {
-        "autcomplete": mangosteen_people_search, 
+        "autocomplete": mangosteen_people_search, 
         "action" : null
       },
       "from" : {
-        "autcomplete": mangosteen_people_search, 
+        "autocomplete": mangosteen_people_search, 
         "action" : null
       },
       "about" : { "terms": ["office now", "digital life & digital work"], "action" : null },
