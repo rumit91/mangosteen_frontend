@@ -364,9 +364,9 @@ p.small {
 }
 
 @-webkit-keyframes redPulse {
-  from { color: #bc330d;/* -webkit-box-shadow: 0 0 9px #333;*/ }
-  50% { color:  #e33100;/* -webkit-box-shadow: 0 0 18px #e33100;*/ }
-  to { color:  #bc330d; /*-webkit-box-shadow: 0 0 9px #333;*/ }
+  from { color: #ff400b; text-shadow: 0 0 18px #ff400b; }
+  50% { color:  #e33100; text-shadow: 0 0 9px #e33100; }
+  to { color:  #ff400b; text-shadow: 0 0 18px #ff400b; }
 }
 
 .radioactive {

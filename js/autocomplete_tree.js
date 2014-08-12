@@ -40,7 +40,7 @@ function resolve_email(query , onComplete ){
 }
 
 function who_is(alias){
- var url = "https://msft-my.spoppe.com/PersonImmersive.aspx?accountname=i%3A0%23%2Ef%7Cmembership%7C" + alias + "@microsoft.com";
+ var url = "https://msft-my.spoppe.com/PersonImmersive.aspx?accountname=i%3A0%23%2Ef%7Cmembership%7C" + alias;
  window.location.href = url;
 }
 
