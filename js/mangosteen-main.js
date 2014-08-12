@@ -27,12 +27,13 @@ var autocomplete_func = null;
 // Placeholder
 var curr_placeholder_index = 0;
 var placeholders = [
-	"Show me emails sent by Satya about One Week",
+	"Show me emails from Satya about One Week",
 	"Create a meeting with Julie sometime this week",
-	"Open Onenote",
-	"Show me docs created by Julie Larson-Green",
-	"Remind me to follow up with Jamie",
+	"Launch OneNote",
+	"Who is Bill Gates",
+	"Show me documents created by Julie Larson-Green",
 	"Search the web for Seahawks tickets",
+	"Create a new slideshow",
 ];
 
 //var json_endpoint = "test.json";
@@ -113,15 +114,17 @@ function initAutocomplete() {
 	$search_box
       // don't navigate away from the field on tab when selecting an item
       .bind( "keyup", function( event ) {
-        if ( event.keyCode === $.ui.keyCode.TAB &&
-            $( this ).autocomplete( "instance" ).menu.active ) {
-          event.preventDefault();
-        }
-		else if (event.keyCode === 13) 
+		if (event.keyCode === 13) 
 		{
 			this.blur();
 			setEndOfContenteditable(this);
 		}
+      })
+      .bind("keydown", function (event) {
+      	if ( event.keyCode === $.ui.keyCode.TAB ) {
+      		//  $( this ).autocomplete( "instance" ).menu.active
+         	event.preventDefault();
+        }
       })
       .autocomplete({
         minLength: 0,
@@ -156,6 +159,7 @@ function initAutocomplete() {
           return false;
         },
         delay: 0,
+        autoFocus: true,
         // positional autocomplete from http://stackoverflow.com/questions/14672433/jquery-ui-autocomplete-dropdown-below-each-word
         open: function( event, ui ) {
           var input = $( event.target ),
@@ -204,7 +208,7 @@ function initAutocomplete() {
 
         	var ac_letter_index = query.lastIndexOf(last_ac_term);
         	if (ac_letter_index >= 0) {
-	        	query = query.substring(0, ac_letter_index) + selected + query.substring(ac_letter_index + last_ac_term.length);
+	        	query = query.substring(0, ac_letter_index) + selected + " " + query.substring(ac_letter_index + last_ac_term.length);
 				$search_box.html(query);
 
 				if (!was_grammar_ac) {
@@ -387,6 +391,8 @@ function update_search_box(query, lastLetterIsSpace) {
 	if (grammar_terms.indexOf(last_ac_term.toLowerCase()) >= 0) {
 		was_grammar_ac = true;
 		update_grammar_ac(last_ac_term);
+
+		$search_box.autocomplete("close");
 		reset_autocomplete();
 	}
 
