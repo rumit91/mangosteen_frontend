@@ -1,3 +1,10 @@
+Date.prototype.addDays = function(days)
+{
+    var dat = new Date(this.valueOf());
+        dat.setDate(dat.getDate() + days);
+            return dat;
+}
+
 params = {}
 
 var snapmeetPeopleUrl = "https://snapmeet.azurewebsites.net/People/Search"
@@ -88,13 +95,82 @@ function fast_search(query){
 }
 
 function show_me_emails(search_query) {
-  console.log("Raw Query " + search_query);
+     console.log("Raw Query " + search_query);
   search_query = search_query.toLowerCase();
   if (search_query.indexOf("show me emails") == 0){
     search_query = search_query.substring("show me emails".length);
   }
 
   search(search_query);
+}
+
+function suggest_meeting_times(params){
+   
+   var ticks = null;
+   var today = new Date();
+   if (!params.time || params.time === "today"){
+     ticks = get_start_and_end_ticks(today, 0)
+   }
+   else if (params.time === "next week"){
+     ticks = get_start_and_end_ticks(today.addDays(7), 0)
+   }
+   else if (params.time === "tomorrow"){
+     ticks = get_start_and_end_ticks(today.addDays(1), 0)
+   }
+    
+    if (!ticks) {
+      return;
+    }
+
+   $.ajax({
+      type: "POST",
+      url: "https://snapmeet.azurewebsites.net/SetupMeeting/Suggest?alias=saahm",
+      contentType:"application/json; charset=utf-8",
+      data: JSON.stringify({ SearchStartTime: ticks[0],
+          SearchEndTime: ticks[1],
+          Duration: "60",
+          AttendeeNames: [params.person],
+          AttendeeAddresses: [params.email],
+          HasConferenceRoom: true}),
+      dataType: "json"
+      }).done( function( data ){ 
+        console.log(data);
+      });
+}
+
+function get_start_and_end_ticks(date, date_offset) {
+  var current_time = new Date();
+  var selected_date = date;
+  selected_date = new Date(selected_date.getTime() + (date_offset * 86400000));
+  console.log(selected_date);
+  var start_time;
+  var end_time;
+  if(current_time > selected_date) {
+    if(current_time.getHours() >= 9 && current_time.getHours() < 16){
+      //start with today
+      start_time = new Date(current_time.getFullYear(), current_time.getMonth(), current_time.getDate(), current_time.getHours()+1, 0, 0, 0);
+      end_time = new Date(current_time.getFullYear(), current_time.getMonth(), current_time.getDate(), 17, 0, 0, 0);
+    }
+    else if(current_time.getHours() <= 9) {
+      //start with today
+      start_time = new Date(current_time.getFullYear(), current_time.getMonth(), current_time.getDate(), 9, 0, 0, 0);
+      end_time = new Date(current_time.getFullYear(), current_time.getMonth(), current_time.getDate(), 17, 0, 0, 0);
+    }
+    else {
+      //start with tomorrow
+      start_time = new Date(current_time.getFullYear(), current_time.getMonth(), current_time.getDate()+1, 9, 0, 0, 0);
+      end_time = new Date(current_time.getFullYear(), current_time.getMonth(), current_time.getDate()+1, 17, 0, 0, 0);
+      //TODO: check if it's the weekend
+      //TODO: reset the dropdown to tomorrow
+    }
+  }
+  else {
+    start_time = new Date(selected_date.getFullYear(), selected_date.getMonth(), selected_date.getDate(), 9, 0, 0, 0);
+    end_time = new Date(selected_date.getFullYear(), selected_date.getMonth(), selected_date.getDate(), 17, 0, 0, 0);
+  }
+  var start_ticks = start_time.getTime() + (start_time.getTimezoneOffset()*60);
+  var end_ticks = end_time.getTime() + (end_time.getTimezoneOffset()*60);
+  return [start_ticks, end_ticks];
 }
 
 function reset_tree(){
@@ -108,16 +184,16 @@ tree = {
     "options":{ 
       "to" : {
         "autocomplete": mangosteen_people_search, 
-        "action" : null
+        "action" :  function( text ){ show_me_emails(getSearchQuery()) } 
       },
       "from" : {
         "autocomplete": mangosteen_people_search, 
-        "action" : null
+        "action" :  function( text ){ show_me_emails(getSearchQuery()) } 
       },
-      "about" : { "terms": ["office now", "digital life & digital work"], "action" : null },
-      "with links to" : { "terms" : ["yammer.com", "bing.com", "xbox.com", "twitter.com", "flickr.com", "ifttt.com", "wikipedia.org", "facebook.com"], "action":null},
-      "sent before " : {"terms" : ["yesterday", "monday", "june", "august"], "action": null},
-      "sent after" : {"terms" : ["yesterday", "monday", "july"], "action" : null},
+      "about" : { "terms": ["office now", "digital life & digital work"], "action" :  function( text ){ show_me_emails(getSearchQuery()) }  },
+      "with links to" : { "terms" : ["yammer.com", "bing.com", "xbox.com", "twitter.com", "flickr.com", "ifttt.com", "wikipedia.org", "facebook.com"], "action": function( text ){ show_me_emails(getSearchQuery()) } },
+      "sent before " : {"terms" : ["yesterday", "monday", "june", "august"], "action":  function( text ){ show_me_emails(getSearchQuery()) } },
+      "sent after" : {"terms" : ["yesterday", "monday", "july"], "action" :  function( text ){ show_me_emails(getSearchQuery()) } },
     }
   },
   "launch": {
@@ -139,14 +215,14 @@ tree = {
     }
   },
   "schedule a meeting": {
-    "execute": function(){ /* TODO */},
+    "execute": function(){ /*suggest_meeting_times(params)*/ },
     "options" : {
       "with" : { 
         "autocomplete" : snapmeet_people_search,
-        "action" : function(person){ params.person = person; }
+        "action" : function(person){ params.person = person; resolve_email(person, function(email) {params.email = email;} ) }
       },
       "sometime" : { 
-        "terms" : ["this week", "today", "tomorrow"],
+        "terms" : ["next week", "today", "tomorrow"],
         "action" : function(time){ params.time = time; }
       },
       "about" : { 
