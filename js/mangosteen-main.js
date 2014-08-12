@@ -4,7 +4,6 @@
 var json_endpoint = "http://eql.herokuapp.com/parse/";
 var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
 var json_contacts_endpoint = "http://eql.herokuapp.com/contacts/";
-var snapmeetPeopleUrl = "https://snapmeeting.azurewebites.net/People/Search"
 var contextual_user = "saahm";
 var queryParamKey = "q";
 var grammar_terms;
@@ -141,7 +140,7 @@ function initAutocomplete() {
         	} else {
         		was_grammar_ac = true;
         		response(grammar_terms.filter(function (term) {
-        			return selected_grammars.indexOf(term) < 0;
+        			return selected_grammars.indexOf(term) < 0 && term.indexOf(last_ac_term) >= 0;
         		}));
         	}
         },
@@ -199,7 +198,13 @@ function initAutocomplete() {
         	if (ac_letter_index >= 0) {
 	        	query = query.substring(0, ac_letter_index) + selected + query.substring(ac_letter_index + last_ac_term.length);
 				$search_box.html(query);
-	            update_ac(selected);
+
+				if (!was_grammar_ac) {
+	            	update_nongrammar_ac(selected);
+	        	} else {
+	        		update_grammar_ac(selected);
+	        	}
+
 	        	reset_autocomplete();
 	        } else {
 	        	console.log("Unexpected autocomplete error. AC term not found in query");
@@ -210,9 +215,8 @@ function initAutocomplete() {
       });
 }
 
-function update_ac(term) {
-	if (was_grammar_ac) {
-		if (root_action == null) {
+function update_grammar_ac(term) {
+	if (root_action == null) {
     		root_action = tree[term];
     		if (!root_action) {
     			console.log("Unsupported command. Please try something different!");
@@ -234,30 +238,31 @@ function update_ac(term) {
 			}
     	}
 
-		last_grammar_term = "";
-		last_grammmar_index = -1;
-    	
+	last_grammar_term = "";
+	last_grammmar_index = -1;
+	
 
-    	selected_grammars.push(term);
-    	// Replace with next set of possible grammars
-    	grammar_terms = get_properties(root_action.options);
-    } else {
-    	// Just AC'ed a contact, max 1 contact, so don't trigger contacts again
-    	should_trigger_contacts_ac = false;
-    	// This must have been a non-grammar term
-    	if (root_action) {
-    		if (root_action.options) {
-				var option = root_action.options[last_grammar_term];
-				if (option && option.action) {
-					option.action.call(this, term);
-					console.log("Succcessfully launched action");
-				}
-			} else if (root_action.execute) {
-				// Optionless command
-				root_action.execute.call(this, term);
+	selected_grammars.push(term);
+	// Replace with next set of possible grammars
+	grammar_terms = get_properties(root_action.options);
+}
+
+function update_nongrammar_ac(term) {
+	// Just AC'ed a contact, max 1 contact, so don't trigger contacts again
+	should_trigger_contacts_ac = false;
+	// This must have been a non-grammar term
+	if (root_action) {
+		if (root_action.options) {
+			var option = root_action.options[last_grammar_term];
+			if (option && option.action) {
+				option.action.call(this, term);
+				console.log("Succcessfully launched action");
 			}
+		} else if (root_action.action) {
+			// Optionless command
+			root_action.action.call(this, term);
 		}
-    }
+	}
 }
 
 function log_parse_state() {
@@ -318,7 +323,7 @@ function update_search_box(query, lastLetterIsSpace) {
 			new_query_terms.push(query_term);
 		});
 
-		 query_html = new_query_terms.join(" ");
+		query_html = new_query_terms.join(" ");
 	} else {
 		query_html = $search_box.html();
 	}
@@ -328,8 +333,12 @@ function update_search_box(query, lastLetterIsSpace) {
 		query_html += "&nbsp;";
 	}
 
-	// console.log("grammar term: " + last_grammar_term);
-	// console.log("nonqueryterm: " + current_nongrammar_term);
+	// Update AC if user typed a grammar term manually (no AC)
+	if (grammar_terms.indexOf(last_ac_term.toLowerCase()) >= 0) {
+		was_grammar_ac = true;
+		update_grammar_ac(last_ac_term);
+		reset_autocomplete();
+	}
 
 	$search_box.html(query_html);
 	setEndOfContenteditable($search_box[0]);
