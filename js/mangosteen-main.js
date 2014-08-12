@@ -6,26 +6,25 @@ var json_terms_endpoint = "http://eql.herokuapp.com/terminals";
 var json_contacts_endpoint = "http://eql.herokuapp.com/contacts/";
 var contextual_user = "saahm";
 var queryParamKey = "q";
-var grammar_terms;
 var $search_box;
 
 // autocomplete suggestion
-var contact_ac_grammar_terms = ["from", "to", "by"];
+var grammar_terms;
 var last_grammar_term = "";
 var last_grammmar_index = -1;
+var last_ac_term = "";
+var last_ac_index = -1;
 var grammar_tokens = [];
+var selected_grammars = [];
+var selected_nongrammars = [];
 var was_grammar_ac = true;
 var root_action = null;
 
 var should_trigger_nongrammar_ac = false;
 var should_trigger_contacts_ac = false;
-var autocomplete_func = null
-var last_ac_term = "";
-var last_ac_index = -1;
+var autocomplete_func = null;
 
-var selected_grammars = [];
-var selected_nongrammars = [];
-
+// Placeholder
 var curr_placeholder_index = 0;
 var placeholders = [
 	"Show me emails sent by Satya about One Week",
@@ -69,10 +68,13 @@ $(document).ready(function(){
 	// Keypress is called before input value is updated. Keyup is called after
 	// Doesn't work well with modified keystrokes (e.g. ctrl+a)
 	$search_box.keyup(function(e) {
-		//if (e.keyCode != 32) {
-			var query = getSearchQuery();
+		var query = getSearchQuery();
+
+		if (query) {
 			update_search_box(query, e.keyCode == 32);
-		//}
+		} else {
+			on_query_emptied();
+		}
 	});
 	initAutocomplete();
 
@@ -115,7 +117,7 @@ function initAutocomplete() {
             $( this ).autocomplete( "instance" ).menu.active ) {
           event.preventDefault();
         }
-		else if ( event.keyCode === 13) 
+		else if (event.keyCode === 13) 
 		{
 			this.blur();
 			setEndOfContenteditable(this);
@@ -125,7 +127,17 @@ function initAutocomplete() {
         minLength: 0,
         source: function( request, response ) {
         	if (((should_trigger_contacts_ac && last_ac_term.length > 1) || should_trigger_nongrammar_ac) && autocomplete_func) {
-          		autocomplete_func(last_ac_term, function(results) { response(results); });
+          		autocomplete_func(last_ac_term, function(results) {
+          			if (should_trigger_nongrammar_ac) {
+          				// server side filtering already done for contacts
+          				results = results.filter(function(result) {
+          					return result.indexOf(last_ac_term.toLowerCase()) >= 0;
+          				}); 
+          			}
+
+          			response(results);
+          		});
+
         		was_grammar_ac = false;
         	} else if (should_trigger_nongrammar_ac || should_trigger_contacts_ac) {
         		// Min length not met or no ac fn available
@@ -134,7 +146,8 @@ function initAutocomplete() {
         	} else {
         		was_grammar_ac = true;
         		response(grammar_terms.filter(function (term) {
-        			return selected_grammars.indexOf(term) < 0 && term.indexOf(last_ac_term) >= 0;
+        			var lowercase_term = term.toLowerCase();
+        			return selected_grammars.indexOf(lowercase_term) < 0 && lowercase_term.indexOf(last_ac_term.toLowerCase()) >= 0;
         		}));
         	}
         },
@@ -283,6 +296,25 @@ function reset_autocomplete() {
 	last_grammmar_index = -1;
 	last_ac_term = "";
 	last_ac_index = -1;
+}
+
+function on_query_emptied() {
+	reset_autocomplete();
+	reset_tree();
+	$search_box.autocomplete("close");
+
+	// :( we need classes
+	grammar_tokens = [];
+	selected_grammars = [];
+	selected_nongrammars = [];
+	was_grammar_ac = true;
+	root_action = null;
+
+	should_trigger_nongrammar_ac = false;
+	should_trigger_contacts_ac = false;
+	autocomplete_func = null;
+
+	grammar_terms = get_properties(tree);
 }
 
 function get_properties(obj) {
