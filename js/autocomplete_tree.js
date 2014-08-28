@@ -27,7 +27,7 @@ function launch_excel(){
 }
 
 function resolve_email(query , onComplete ){
-  $.get(snapmeetPeopleUrl + "?user=saahm&query="+query, function(data){ 
+  $.get(snapmeetPeopleUrl + "?user=saahm@microsoft.com&query="+query, function(data){ 
           var email = "";
           if (data && data.contacts && data.contacts.length > 0){
             email = data.contacts[0].alias+"@microsoft.com";
@@ -80,7 +80,7 @@ function mangosteen_people_search(prefix, onSuccess){
 }
 
 function snapmeet_people_search( prefix , onSuccess ){
-  $.get(snapmeetPeopleUrl + "?user=saahm&query="+ prefix , function(data){ 
+  $.get(snapmeetPeopleUrl + "?user=saahm@microsoft.com&query="+ prefix , function(data){ 
           var names = []
           if (data && data.contacts && data.others){
             $.each(data.contacts, function(i, item){ names.push(item.name); });
